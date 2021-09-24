@@ -1,48 +1,31 @@
 const ROCrate = require("ro-crate").ROCrate;
+const {program} = require('commander');
+program.version('0.0.1');
 const fs = require("fs");
 const _ = require("lodash");
 const inputFile = "./input/ro-crate-metadata.json"
 const outputFile = "./output/ro-crate-metadata.json"
+const csvdir = "./csvfiles"
+
 
 async function main(){
+
+    program.option('-c, --crate-path <type>', 'Path to RO-crate ')
+    .option('-d, --csv-dir <type>', 'Path to directory of CSV files')
+    program.parse(process.argv);
+    const opts = program.opts();
+    inputfile - 
     const input = new ROCrate(JSON.parse(fs.readFileSync(inputFile)));
     input.index();
     const root = input.getRootDataset();
+    root["@type"] = input.utils.asArray(root["@type"]);
+    root["@type"].push("Corpus");
 
-    root.conformsTo = {
-                "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus"
-            };
+ 
     // Add profile stuff
 
     // TODO - get these from a repository so they are, you know, correct!
-    input.addItem(
-        {
-            "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus",
-            "@type": "CreativeWork",
-            "description": "A corpus is the highest level unit of organization",
-            "name": "Language Corpus",
-            "version": "0.1"
-          }
-    );
-    input.addItem(
-        {
-            "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item",
-            "@type": "CreativeWork",
-            "description": "A language data item is a communicative event such as a conversation, a research session, a play, an article, a book",
-            "name": "Language Data Item",
-            "version": "0.1"
-          }
-    )
-
-    input.addItem(
-            {
-                "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Collection",
-                "@type": "CreativeWork",
-                "description": "A language collection is a set of collections or items belong together for some reason",
-                "name": "Language Data Collection",
-                "version": "0.1"
-              },
-    )
+   
 
     // Add provenance info
 
@@ -62,11 +45,9 @@ async function main(){
     interviews = {
         "@id": '#interviews',
         "name": "Interviews",
-        "@type": "RepositoryCollection",
+        "@type": "SubCorpus",
         "description": "Interview items include audio and transripts",
-        "conformsTo": {
-            "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Collection"
-          },
+       
         "hasMember": []
     }
     for (let item of _.clone(input.getGraph())) {
@@ -80,11 +61,10 @@ async function main(){
             
             const newItem = {
                 "@id": `#interview-${item["@id"]}`,
+                "@type": "CorpusItem",
                 "name": item.name[0].replace(/.*interview/,"Interview"),
                 "interviewee": {"@id": intervieweeID},
-                "conformsTo": {
-                    "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
-                  },
+    
                 "hasPart": [{"@id": item["@id"]},{"@id": item.transcriptOf["@id"]}]
             }
             input.addItem(newItem)
@@ -94,7 +74,7 @@ async function main(){
 
         }
     }
-    const newParts = [{"@id": interviews["@id"]}];
+    const newParts = [];
     for (let item of root.hasPart) {
         const part = input.getItem(item["@id"]);
         //console.log(part)
@@ -102,7 +82,7 @@ async function main(){
             newParts.push(item);
         }
     }
-
+    root.hasMember = [{"@id": interviews["@id"]}];
     root.hasPart = newParts;
     input.addItem(interviews)
     console.log(root.hasPart);

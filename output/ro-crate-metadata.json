@@ -49,7 +49,10 @@
       "contactPoint": {
         "@id": "K.Trewin@westernsydney.edu.au"
       },
-      "@type": "Dataset",
+      "@type": [
+        "Dataset",
+        "Corpus"
+      ],
       "license": {
         "@id": "https://creativecommons.org/licenses/by/3.0/au/"
       },
@@ -67,9 +70,6 @@
       ],
       "hasPart": [
         {
-          "@id": "#interviews"
-        },
-        {
           "@id": "http://omeka.uws.edu.au/farmstofreeways/api/collections/4"
         },
         {
@@ -79,9 +79,11 @@
           "@id": "http://omeka.uws.edu.au/farmstofreeways/api/collections/6"
         }
       ],
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus"
-      }
+      "hasMember": [
+        {
+          "@id": "#interviews"
+        }
+      ]
     },
     {
       "@id": "https://creativecommons.org/licenses/by/3.0/au/",
@@ -12221,34 +12223,11 @@
       "name": "/uts.edu.au"
     },
     {
-      "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus",
-      "@type": "CreativeWork",
-      "description": "A corpus is the highest level unit of organization",
-      "name": "Language Corpus",
-      "version": "0.1"
-    },
-    {
-      "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item",
-      "@type": "CreativeWork",
-      "description": "A language data item is a communicative event such as a conversation, a research session, a play, an article, a book",
-      "name": "Language Data Item",
-      "version": "0.1"
-    },
-    {
-      "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Collection",
-      "@type": "CreativeWork",
-      "description": "A language collection is a set of collections or items belong together for some reason",
-      "name": "Language Data Collection",
-      "version": "0.1"
-    },
-    {
       "@id": "#interview-427",
+      "@type": "CorpusItem",
       "name": "Interview with Patricia Colless",
       "interviewee": {
         "@id": "568"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12261,12 +12240,10 @@
     },
     {
       "@id": "#interview-428",
+      "@type": "CorpusItem",
       "name": "Interview with Rita Camilleri",
       "interviewee": {
         "@id": "569"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12279,11 +12256,9 @@
     },
     {
       "@id": "#interview-429",
+      "@type": "CorpusItem",
       "name": "Interview with Heather Corr ",
       "interviewee": {},
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
-      },
       "hasPart": [
         {
           "@id": "429"
@@ -12295,12 +12270,10 @@
     },
     {
       "@id": "#interview-430",
+      "@type": "CorpusItem",
       "name": "Interview with Judith Eastwell",
       "interviewee": {
         "@id": "571"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12313,12 +12286,10 @@
     },
     {
       "@id": "#interview-431",
+      "@type": "CorpusItem",
       "name": "Interview with Florence Gibbons",
       "interviewee": {
         "@id": "572"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12331,12 +12302,10 @@
     },
     {
       "@id": "#interview-432",
+      "@type": "CorpusItem",
       "name": "Interview with Iris Hanna",
       "interviewee": {
         "@id": "573"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12349,12 +12318,10 @@
     },
     {
       "@id": "#interview-433",
+      "@type": "CorpusItem",
       "name": "Interview with Betty Hargreaves",
       "interviewee": {
         "@id": "574"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12367,12 +12334,10 @@
     },
     {
       "@id": "#interview-434",
+      "@type": "CorpusItem",
       "name": "Interview with Marjorie Heath",
       "interviewee": {
         "@id": "575"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12385,12 +12350,10 @@
     },
     {
       "@id": "#interview-435",
+      "@type": "CorpusItem",
       "name": "Interview with Amy Jackson",
       "interviewee": {
         "@id": "576"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12403,12 +12366,10 @@
     },
     {
       "@id": "#interview-436",
+      "@type": "CorpusItem",
       "name": "Interview with Joan Jeffery",
       "interviewee": {
         "@id": "577"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12421,12 +12382,10 @@
     },
     {
       "@id": "#interview-437",
+      "@type": "CorpusItem",
       "name": "Interview with Mavis Lamrock",
       "interviewee": {
         "@id": "578"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12439,12 +12398,10 @@
     },
     {
       "@id": "#interview-438",
+      "@type": "CorpusItem",
       "name": "Interview with Edith Mason",
       "interviewee": {
         "@id": "579"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12457,12 +12414,10 @@
     },
     {
       "@id": "#interview-439",
+      "@type": "CorpusItem",
       "name": "Interview with Thelma Masters",
       "interviewee": {
         "@id": "580"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12475,12 +12430,10 @@
     },
     {
       "@id": "#interview-440",
+      "@type": "CorpusItem",
       "name": "Interview with Joyce McKelvey",
       "interviewee": {
         "@id": "581"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12493,12 +12446,10 @@
     },
     {
       "@id": "#interview-441",
+      "@type": "CorpusItem",
       "name": "Interview with Joyce Moon",
       "interviewee": {
         "@id": "582"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12511,12 +12462,10 @@
     },
     {
       "@id": "#interview-442",
+      "@type": "CorpusItem",
       "name": "Interview with Brenda Niccol",
       "interviewee": {
         "@id": "583"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12529,12 +12478,10 @@
     },
     {
       "@id": "#interview-443",
+      "@type": "CorpusItem",
       "name": "Interview with Sheila Nottley",
       "interviewee": {
         "@id": "584"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12547,12 +12494,10 @@
     },
     {
       "@id": "#interview-444",
+      "@type": "CorpusItem",
       "name": "Interview with Patricia Parker",
       "interviewee": {
         "@id": "585"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12565,12 +12510,10 @@
     },
     {
       "@id": "#interview-445",
+      "@type": "CorpusItem",
       "name": "Interview with Clare Pfoeffer",
       "interviewee": {
         "@id": "586"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12583,12 +12526,10 @@
     },
     {
       "@id": "#interview-446",
+      "@type": "CorpusItem",
       "name": "Interview with Winsome Phillis",
       "interviewee": {
         "@id": "587"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12601,12 +12542,10 @@
     },
     {
       "@id": "#interview-447",
+      "@type": "CorpusItem",
       "name": "Interview with Mary Pike",
       "interviewee": {
         "@id": "588"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12619,12 +12558,10 @@
     },
     {
       "@id": "#interview-448",
+      "@type": "CorpusItem",
       "name": "Interview with Alice Potter",
       "interviewee": {
         "@id": "589"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12637,12 +12574,10 @@
     },
     {
       "@id": "#interview-449",
+      "@type": "CorpusItem",
       "name": "Interview with Olive Price",
       "interviewee": {
         "@id": "590"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12655,12 +12590,10 @@
     },
     {
       "@id": "#interview-450",
+      "@type": "CorpusItem",
       "name": "Interview with Diana Reynolds",
       "interviewee": {
         "@id": "591"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12673,12 +12606,10 @@
     },
     {
       "@id": "#interview-451",
+      "@type": "CorpusItem",
       "name": "Interview with Olga Robshaw",
       "interviewee": {
         "@id": "592"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12691,12 +12622,10 @@
     },
     {
       "@id": "#interview-452",
+      "@type": "CorpusItem",
       "name": "Interview with Doreen Scott",
       "interviewee": {
         "@id": "593"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12709,12 +12638,10 @@
     },
     {
       "@id": "#interview-453",
+      "@type": "CorpusItem",
       "name": "Interview with Marie Sing",
       "interviewee": {
         "@id": "594"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12727,12 +12654,10 @@
     },
     {
       "@id": "#interview-454",
+      "@type": "CorpusItem",
       "name": "Interview with Eugenie Stapleton",
       "interviewee": {
         "@id": "595"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12745,12 +12670,10 @@
     },
     {
       "@id": "#interview-455",
+      "@type": "CorpusItem",
       "name": "Interview with Margaret Taylor",
       "interviewee": {
         "@id": "596"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12763,12 +12686,10 @@
     },
     {
       "@id": "#interview-456",
+      "@type": "CorpusItem",
       "name": "Interview with Marjory Turner",
       "interviewee": {
         "@id": "597"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12781,12 +12702,10 @@
     },
     {
       "@id": "#interview-457",
+      "@type": "CorpusItem",
       "name": "Interview with Edna Vidler",
       "interviewee": {
         "@id": "598"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12799,12 +12718,10 @@
     },
     {
       "@id": "#interview-458",
+      "@type": "CorpusItem",
       "name": "Interview with Amelia Vincent",
       "interviewee": {
         "@id": "599"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12817,12 +12734,10 @@
     },
     {
       "@id": "#interview-459",
+      "@type": "CorpusItem",
       "name": "Interview with Audrey Watson",
       "interviewee": {
         "@id": "600"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12835,12 +12750,10 @@
     },
     {
       "@id": "#interview-460",
+      "@type": "CorpusItem",
       "name": "Interview with Joy Willis",
       "interviewee": {
         "@id": "601"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -12854,11 +12767,8 @@
     {
       "@id": "#interviews",
       "name": "Interviews",
-      "@type": "RepositoryCollection",
+      "@type": "SubCorpus",
       "description": "Interview items include audio and transripts",
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Collection"
-      },
       "hasMember": [
         {
           "@id": "#interview-427"

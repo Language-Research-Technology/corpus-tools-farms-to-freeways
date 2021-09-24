@@ -56,7 +56,10 @@
       "contactPoint": {
         "@id": "K.Trewin@westernsydney.edu.au"
       },
-      "@type": "Dataset",
+      "@type": [
+        "Dataset",
+        "Corpus"
+      ],
       "license": {
         "@id": "https://creativecommons.org/licenses/by/3.0/au/"
       },
@@ -74,9 +77,6 @@
       ],
       "hasPart": [
         {
-          "@id": "#interviews"
-        },
-        {
           "@id": "http://omeka.uws.edu.au/farmstofreeways/api/collections/4"
         },
         {
@@ -86,9 +86,11 @@
           "@id": "http://omeka.uws.edu.au/farmstofreeways/api/collections/6"
         }
       ],
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus"
-      },
+      "hasMember": [
+        {
+          "@id": "#interviews"
+        }
+      ],
       "@reverse": {
         "about": [
           {
@@ -18667,154 +18669,11 @@
       }
     },
     {
-      "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus",
-      "@type": "CreativeWork",
-      "description": "A corpus is the highest level unit of organization",
-      "name": "Language Corpus",
-      "version": "0.1",
-      "@reverse": {
-        "conformsTo": [
-          {
-            "@id": "./"
-          }
-        ]
-      }
-    },
-    {
-      "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item",
-      "@type": "CreativeWork",
-      "description": "A language data item is a communicative event such as a conversation, a research session, a play, an article, a book",
-      "name": "Language Data Item",
-      "version": "0.1",
-      "@reverse": {
-        "conformsTo": [
-          {
-            "@id": "#interview-427"
-          },
-          {
-            "@id": "#interview-428"
-          },
-          {
-            "@id": "#interview-429"
-          },
-          {
-            "@id": "#interview-430"
-          },
-          {
-            "@id": "#interview-431"
-          },
-          {
-            "@id": "#interview-432"
-          },
-          {
-            "@id": "#interview-433"
-          },
-          {
-            "@id": "#interview-434"
-          },
-          {
-            "@id": "#interview-435"
-          },
-          {
-            "@id": "#interview-436"
-          },
-          {
-            "@id": "#interview-437"
-          },
-          {
-            "@id": "#interview-438"
-          },
-          {
-            "@id": "#interview-439"
-          },
-          {
-            "@id": "#interview-440"
-          },
-          {
-            "@id": "#interview-441"
-          },
-          {
-            "@id": "#interview-442"
-          },
-          {
-            "@id": "#interview-443"
-          },
-          {
-            "@id": "#interview-444"
-          },
-          {
-            "@id": "#interview-445"
-          },
-          {
-            "@id": "#interview-446"
-          },
-          {
-            "@id": "#interview-447"
-          },
-          {
-            "@id": "#interview-448"
-          },
-          {
-            "@id": "#interview-449"
-          },
-          {
-            "@id": "#interview-450"
-          },
-          {
-            "@id": "#interview-451"
-          },
-          {
-            "@id": "#interview-452"
-          },
-          {
-            "@id": "#interview-453"
-          },
-          {
-            "@id": "#interview-454"
-          },
-          {
-            "@id": "#interview-455"
-          },
-          {
-            "@id": "#interview-456"
-          },
-          {
-            "@id": "#interview-457"
-          },
-          {
-            "@id": "#interview-458"
-          },
-          {
-            "@id": "#interview-459"
-          },
-          {
-            "@id": "#interview-460"
-          }
-        ]
-      }
-    },
-    {
-      "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Collection",
-      "@type": "CreativeWork",
-      "description": "A language collection is a set of collections or items belong together for some reason",
-      "name": "Language Data Collection",
-      "version": "0.1",
-      "@reverse": {
-        "conformsTo": [
-          {
-            "@id": "#interviews"
-          }
-        ]
-      }
-    },
-    {
       "@id": "#interview-427",
+      "@type": "CorpusItem",
       "name": "Interview with Patricia Colless",
       "interviewee": {
         "@id": "568"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -18834,12 +18693,10 @@
     },
     {
       "@id": "#interview-428",
+      "@type": "CorpusItem",
       "name": "Interview with Rita Camilleri",
       "interviewee": {
         "@id": "569"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -18859,11 +18716,9 @@
     },
     {
       "@id": "#interview-429",
+      "@type": "CorpusItem",
       "name": "Interview with Heather Corr ",
       "interviewee": {},
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
-      },
       "hasPart": [
         {
           "@id": "429"
@@ -18882,12 +18737,10 @@
     },
     {
       "@id": "#interview-430",
+      "@type": "CorpusItem",
       "name": "Interview with Judith Eastwell",
       "interviewee": {
         "@id": "571"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -18907,12 +18760,10 @@
     },
     {
       "@id": "#interview-431",
+      "@type": "CorpusItem",
       "name": "Interview with Florence Gibbons",
       "interviewee": {
         "@id": "572"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -18932,12 +18783,10 @@
     },
     {
       "@id": "#interview-432",
+      "@type": "CorpusItem",
       "name": "Interview with Iris Hanna",
       "interviewee": {
         "@id": "573"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -18957,12 +18806,10 @@
     },
     {
       "@id": "#interview-433",
+      "@type": "CorpusItem",
       "name": "Interview with Betty Hargreaves",
       "interviewee": {
         "@id": "574"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -18982,12 +18829,10 @@
     },
     {
       "@id": "#interview-434",
+      "@type": "CorpusItem",
       "name": "Interview with Marjorie Heath",
       "interviewee": {
         "@id": "575"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19007,12 +18852,10 @@
     },
     {
       "@id": "#interview-435",
+      "@type": "CorpusItem",
       "name": "Interview with Amy Jackson",
       "interviewee": {
         "@id": "576"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19032,12 +18875,10 @@
     },
     {
       "@id": "#interview-436",
+      "@type": "CorpusItem",
       "name": "Interview with Joan Jeffery",
       "interviewee": {
         "@id": "577"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19057,12 +18898,10 @@
     },
     {
       "@id": "#interview-437",
+      "@type": "CorpusItem",
       "name": "Interview with Mavis Lamrock",
       "interviewee": {
         "@id": "578"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19082,12 +18921,10 @@
     },
     {
       "@id": "#interview-438",
+      "@type": "CorpusItem",
       "name": "Interview with Edith Mason",
       "interviewee": {
         "@id": "579"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19107,12 +18944,10 @@
     },
     {
       "@id": "#interview-439",
+      "@type": "CorpusItem",
       "name": "Interview with Thelma Masters",
       "interviewee": {
         "@id": "580"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19132,12 +18967,10 @@
     },
     {
       "@id": "#interview-440",
+      "@type": "CorpusItem",
       "name": "Interview with Joyce McKelvey",
       "interviewee": {
         "@id": "581"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19157,12 +18990,10 @@
     },
     {
       "@id": "#interview-441",
+      "@type": "CorpusItem",
       "name": "Interview with Joyce Moon",
       "interviewee": {
         "@id": "582"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19182,12 +19013,10 @@
     },
     {
       "@id": "#interview-442",
+      "@type": "CorpusItem",
       "name": "Interview with Brenda Niccol",
       "interviewee": {
         "@id": "583"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19207,12 +19036,10 @@
     },
     {
       "@id": "#interview-443",
+      "@type": "CorpusItem",
       "name": "Interview with Sheila Nottley",
       "interviewee": {
         "@id": "584"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19232,12 +19059,10 @@
     },
     {
       "@id": "#interview-444",
+      "@type": "CorpusItem",
       "name": "Interview with Patricia Parker",
       "interviewee": {
         "@id": "585"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19257,12 +19082,10 @@
     },
     {
       "@id": "#interview-445",
+      "@type": "CorpusItem",
       "name": "Interview with Clare Pfoeffer",
       "interviewee": {
         "@id": "586"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19282,12 +19105,10 @@
     },
     {
       "@id": "#interview-446",
+      "@type": "CorpusItem",
       "name": "Interview with Winsome Phillis",
       "interviewee": {
         "@id": "587"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19307,12 +19128,10 @@
     },
     {
       "@id": "#interview-447",
+      "@type": "CorpusItem",
       "name": "Interview with Mary Pike",
       "interviewee": {
         "@id": "588"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19332,12 +19151,10 @@
     },
     {
       "@id": "#interview-448",
+      "@type": "CorpusItem",
       "name": "Interview with Alice Potter",
       "interviewee": {
         "@id": "589"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19357,12 +19174,10 @@
     },
     {
       "@id": "#interview-449",
+      "@type": "CorpusItem",
       "name": "Interview with Olive Price",
       "interviewee": {
         "@id": "590"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19382,12 +19197,10 @@
     },
     {
       "@id": "#interview-450",
+      "@type": "CorpusItem",
       "name": "Interview with Diana Reynolds",
       "interviewee": {
         "@id": "591"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19407,12 +19220,10 @@
     },
     {
       "@id": "#interview-451",
+      "@type": "CorpusItem",
       "name": "Interview with Olga Robshaw",
       "interviewee": {
         "@id": "592"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19432,12 +19243,10 @@
     },
     {
       "@id": "#interview-452",
+      "@type": "CorpusItem",
       "name": "Interview with Doreen Scott",
       "interviewee": {
         "@id": "593"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19457,12 +19266,10 @@
     },
     {
       "@id": "#interview-453",
+      "@type": "CorpusItem",
       "name": "Interview with Marie Sing",
       "interviewee": {
         "@id": "594"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19482,12 +19289,10 @@
     },
     {
       "@id": "#interview-454",
+      "@type": "CorpusItem",
       "name": "Interview with Eugenie Stapleton",
       "interviewee": {
         "@id": "595"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19507,12 +19312,10 @@
     },
     {
       "@id": "#interview-455",
+      "@type": "CorpusItem",
       "name": "Interview with Margaret Taylor",
       "interviewee": {
         "@id": "596"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19532,12 +19335,10 @@
     },
     {
       "@id": "#interview-456",
+      "@type": "CorpusItem",
       "name": "Interview with Marjory Turner",
       "interviewee": {
         "@id": "597"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19557,12 +19358,10 @@
     },
     {
       "@id": "#interview-457",
+      "@type": "CorpusItem",
       "name": "Interview with Edna Vidler",
       "interviewee": {
         "@id": "598"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19582,12 +19381,10 @@
     },
     {
       "@id": "#interview-458",
+      "@type": "CorpusItem",
       "name": "Interview with Amelia Vincent",
       "interviewee": {
         "@id": "599"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19607,12 +19404,10 @@
     },
     {
       "@id": "#interview-459",
+      "@type": "CorpusItem",
       "name": "Interview with Audrey Watson",
       "interviewee": {
         "@id": "600"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19632,12 +19427,10 @@
     },
     {
       "@id": "#interview-460",
+      "@type": "CorpusItem",
       "name": "Interview with Joy Willis",
       "interviewee": {
         "@id": "601"
-      },
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Item"
       },
       "hasPart": [
         {
@@ -19658,11 +19451,8 @@
     {
       "@id": "#interviews",
       "name": "Interviews",
-      "@type": "RepositoryCollection",
+      "@type": "SubCorpus",
       "description": "Interview items include audio and transripts",
-      "conformsTo": {
-        "@id": "https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Collection"
-      },
       "hasMember": [
         {
           "@id": "#interview-427"
@@ -19768,7 +19558,7 @@
         }
       ],
       "@reverse": {
-        "hasPart": [
+        "hasMember": [
           {
             "@id": "./"
           }
@@ -19841,7 +19631,11 @@ table.table {
             <td style='text-align:left'><span>Farms to Freeways Example Dataset</span></td>
             </tr><tr>
             <th style="text-align:left;" class="prop">@type</th>
-            <td style='text-align:left'><span>Dataset</span></td>
+            <td style='text-align:left'><ul>
+                        <li><span>Dataset</span></li>
+                        
+                        <li><span>Corpus</span></li>
+                        </ul></td>
             </tr><tr>
             <th style="text-align:left;" class="prop">description<span>&nbsp;</span><a href="http://schema.org/description">[?]</a></th>
             <td style='text-align:left'><span>This data set was exported from an Omeka Repository as an example of a DataCrate. It contains the Collections and Items from the repository but does NOT have the exhibitions. The DOI resolves to an archive of the data elsewhere</span></td>
@@ -19890,8 +19684,6 @@ table.table {
             </tr><tr>
             <th style="text-align:left;" class="prop">hasPart<span>&nbsp;</span><a href="http://schema.org/hasPart">[?]</a></th>
             <td style='text-align:left'><ul>
-                        <li><a href="#%23interviews">Interviews</a></li>
-                        
                         <li><a href="#http%3A//omeka.uws.edu.au/farmstofreeways/api/collections/4">Photographs</a></li>
                         
                         <li><a href="#http%3A//omeka.uws.edu.au/farmstofreeways/api/collections/5">Letters and Notes</a></li>
@@ -19899,8 +19691,8 @@ table.table {
                         <li><a href="#http%3A//omeka.uws.edu.au/farmstofreeways/api/collections/6">Project Materials</a></li>
                         </ul></td>
             </tr><tr>
-            <th style="text-align:left;" class="prop">conformsTo<span>&nbsp;</span><a href="http://purl.org/dc/terms/conformsTo">[?]</a></th>
-            <td style='text-align:left'><a href="#https%3A//w3id.org/ro/profile/LanguageResearchTechnlogy/draft%23Corpus">Language Corpus</a></td>
+            <th style="text-align:left;" class="prop">hasMember<span>&nbsp;</span><a href="http://pcdm.org/models#hasMember">[?]</a></th>
+            <td style='text-align:left'><a href="#%23interviews">Interviews</a></td>
             </tr><tr><th colspan="2" style="text-align:center">Items that reference this one</th><tr><tr>
             <th style="text-align:left;" class="prop">about<span>&nbsp;</span><a href="http://schema.org/about">[?]</a></th>
             <td style='text-align:left'><a href="#ro-crate-metadata.json">ro-crate-metadata.json</a></td>
@@ -20340,110 +20132,6 @@ table.table {
         </div>
         <hr/><br/><br/>
            <div>
-            <h3> Interviews</h3>
-            
-            
-            
-            
-        <div id="#interviews">
-            
-            <table class="table metadata table-striped" >
-                <tbody><tr>
-            <th style="text-align:left;" class="prop">@id</th>
-            <td style='text-align:left'><span>#interviews</span></td>
-            </tr><tr>
-            <th style="text-align:left;" class="prop">name<span>&nbsp;</span><a href="http://schema.org/name">[?]</a></th>
-            <td style='text-align:left'><span>Interviews</span></td>
-            </tr><tr>
-            <th style="text-align:left;" class="prop">@type</th>
-            <td style='text-align:left'><span>RepositoryCollection</span></td>
-            </tr><tr>
-            <th style="text-align:left;" class="prop">description<span>&nbsp;</span><a href="http://schema.org/description">[?]</a></th>
-            <td style='text-align:left'><span>Interview items include audio and transripts</span></td>
-            </tr><tr>
-            <th style="text-align:left;" class="prop">conformsTo<span>&nbsp;</span><a href="http://purl.org/dc/terms/conformsTo">[?]</a></th>
-            <td style='text-align:left'><a href="#https%3A//w3id.org/ro/profile/LanguageResearchTechnlogy/draft%23Collection">Language Data Collection</a></td>
-            </tr><tr>
-            <th style="text-align:left;" class="prop">hasMember<span>&nbsp;</span><a href="http://pcdm.org/models#hasMember">[?]</a></th>
-            <td style='text-align:left'><ul>
-                        <li><a href="#%23interview-427">Interview with Patricia Colless</a></li>
-                        
-                        <li><a href="#%23interview-428">Interview with Rita Camilleri</a></li>
-                        
-                        <li><a href="#%23interview-429">Interview with Heather Corr </a></li>
-                        
-                        <li><a href="#%23interview-430">Interview with Judith Eastwell</a></li>
-                        
-                        <li><a href="#%23interview-431">Interview with Florence Gibbons</a></li>
-                        
-                        <li><a href="#%23interview-432">Interview with Iris Hanna</a></li>
-                        
-                        <li><a href="#%23interview-433">Interview with Betty Hargreaves</a></li>
-                        
-                        <li><a href="#%23interview-434">Interview with Marjorie Heath</a></li>
-                        
-                        <li><a href="#%23interview-435">Interview with Amy Jackson</a></li>
-                        
-                        <li><a href="#%23interview-436">Interview with Joan Jeffery</a></li>
-                        
-                        <li><a href="#%23interview-437">Interview with Mavis Lamrock</a></li>
-                        
-                        <li><a href="#%23interview-438">Interview with Edith Mason</a></li>
-                        
-                        <li><a href="#%23interview-439">Interview with Thelma Masters</a></li>
-                        
-                        <li><a href="#%23interview-440">Interview with Joyce McKelvey</a></li>
-                        
-                        <li><a href="#%23interview-441">Interview with Joyce Moon</a></li>
-                        
-                        <li><a href="#%23interview-442">Interview with Brenda Niccol</a></li>
-                        
-                        <li><a href="#%23interview-443">Interview with Sheila Nottley</a></li>
-                        
-                        <li><a href="#%23interview-444">Interview with Patricia Parker</a></li>
-                        
-                        <li><a href="#%23interview-445">Interview with Clare Pfoeffer</a></li>
-                        
-                        <li><a href="#%23interview-446">Interview with Winsome Phillis</a></li>
-                        
-                        <li><a href="#%23interview-447">Interview with Mary Pike</a></li>
-                        
-                        <li><a href="#%23interview-448">Interview with Alice Potter</a></li>
-                        
-                        <li><a href="#%23interview-449">Interview with Olive Price</a></li>
-                        
-                        <li><a href="#%23interview-450">Interview with Diana Reynolds</a></li>
-                        
-                        <li><a href="#%23interview-451">Interview with Olga Robshaw</a></li>
-                        
-                        <li><a href="#%23interview-452">Interview with Doreen Scott</a></li>
-                        
-                        <li><a href="#%23interview-453">Interview with Marie Sing</a></li>
-                        
-                        <li><a href="#%23interview-454">Interview with Eugenie Stapleton</a></li>
-                        
-                        <li><a href="#%23interview-455">Interview with Margaret Taylor</a></li>
-                        
-                        <li><a href="#%23interview-456">Interview with Marjory Turner</a></li>
-                        
-                        <li><a href="#%23interview-457">Interview with Edna Vidler</a></li>
-                        
-                        <li><a href="#%23interview-458">Interview with Amelia Vincent</a></li>
-                        
-                        <li><a href="#%23interview-459">Interview with Audrey Watson</a></li>
-                        
-                        <li><a href="#%23interview-460">Interview with Joy Willis</a></li>
-                        </ul></td>
-            </tr><tr><th colspan="2" style="text-align:center">Items that reference this one</th><tr><tr>
-            <th style="text-align:left;" class="prop">hasPart<span>&nbsp;</span><a href="http://schema.org/hasPart">[?]</a></th>
-            <td style='text-align:left'><a href="#./">Farms to Freeways Example Dataset</a></td>
-            </tr></tbody>
-            </table>
-        </div>
-
-        </div>
-        <hr/><br/><br/>
-           <div>
             <h3><a href="http://omeka.uws.edu.au/farmstofreeways/api/collections/4">Go to: </a> Photographs</h3>
             
             
@@ -20679,31 +20367,99 @@ table.table {
         </div>
         <hr/><br/><br/>
            <div>
-            <h3><a href="https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus">Go to: </a> Language Corpus</h3>
+            <h3> Interviews</h3>
             
             
             
             
-        <div id="https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus">
+        <div id="#interviews">
             
             <table class="table metadata table-striped" >
                 <tbody><tr>
             <th style="text-align:left;" class="prop">@id</th>
-            <td style='text-align:left'><a href="https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus">https://w3id.org/ro/profile/LanguageResearchTechnlogy/draft#Corpus</a></td>
+            <td style='text-align:left'><span>#interviews</span></td>
             </tr><tr>
             <th style="text-align:left;" class="prop">name<span>&nbsp;</span><a href="http://schema.org/name">[?]</a></th>
-            <td style='text-align:left'><span>Language Corpus</span></td>
+            <td style='text-align:left'><span>Interviews</span></td>
             </tr><tr>
             <th style="text-align:left;" class="prop">@type</th>
-            <td style='text-align:left'><span>CreativeWork</span></td>
+            <td style='text-align:left'><span>SubCorpus</span></td>
             </tr><tr>
             <th style="text-align:left;" class="prop">description<span>&nbsp;</span><a href="http://schema.org/description">[?]</a></th>
-            <td style='text-align:left'><span>A corpus is the highest level unit of organization</span></td>
+            <td style='text-align:left'><span>Interview items include audio and transripts</span></td>
             </tr><tr>
-            <th style="text-align:left;" class="prop">version<span>&nbsp;</span><a href="http://schema.org/version">[?]</a></th>
-            <td style='text-align:left'><span>0.1</span></td>
+            <th style="text-align:left;" class="prop">hasMember<span>&nbsp;</span><a href="http://pcdm.org/models#hasMember">[?]</a></th>
+            <td style='text-align:left'><ul>
+                        <li><a href="#%23interview-427">Interview with Patricia Colless</a></li>
+                        
+                        <li><a href="#%23interview-428">Interview with Rita Camilleri</a></li>
+                        
+                        <li><a href="#%23interview-429">Interview with Heather Corr </a></li>
+                        
+                        <li><a href="#%23interview-430">Interview with Judith Eastwell</a></li>
+                        
+                        <li><a href="#%23interview-431">Interview with Florence Gibbons</a></li>
+                        
+                        <li><a href="#%23interview-432">Interview with Iris Hanna</a></li>
+                        
+                        <li><a href="#%23interview-433">Interview with Betty Hargreaves</a></li>
+                        
+                        <li><a href="#%23interview-434">Interview with Marjorie Heath</a></li>
+                        
+                        <li><a href="#%23interview-435">Interview with Amy Jackson</a></li>
+                        
+                        <li><a href="#%23interview-436">Interview with Joan Jeffery</a></li>
+                        
+                        <li><a href="#%23interview-437">Interview with Mavis Lamrock</a></li>
+                        
+                        <li><a href="#%23interview-438">Interview with Edith Mason</a></li>
+                        
+                        <li><a href="#%23interview-439">Interview with Thelma Masters</a></li>
+                        
+                        <li><a href="#%23interview-440">Interview with Joyce McKelvey</a></li>
+                        
+                        <li><a href="#%23interview-441">Interview with Joyce Moon</a></li>
+                        
+                        <li><a href="#%23interview-442">Interview with Brenda Niccol</a></li>
+                        
+                        <li><a href="#%23interview-443">Interview with Sheila Nottley</a></li>
+                        
+                        <li><a href="#%23interview-444">Interview with Patricia Parker</a></li>
+                        
+                        <li><a href="#%23interview-445">Interview with Clare Pfoeffer</a></li>
+                        
+                        <li><a href="#%23interview-446">Interview with Winsome Phillis</a></li>
+                        
+                        <li><a href="#%23interview-447">Interview with Mary Pike</a></li>
+                        
+                        <li><a href="#%23interview-448">Interview with Alice Potter</a></li>
+                        
+                        <li><a href="#%23interview-449">Interview with Olive Price</a></li>
+                        
+                        <li><a href="#%23interview-450">Interview with Diana Reynolds</a></li>
+                        
+                        <li><a href="#%23interview-451">Interview with Olga Robshaw</a></li>
+                        
+                        <li><a href="#%23interview-452">Interview with Doreen Scott</a></li>
+                        
+                        <li><a href="#%23interview-453">Interview with Marie Sing</a></li>
+                        
+                        <li><a href="#%23interview-454">Interview with Eugenie Stapleton</a></li>
+                        
+                        <li><a href="#%23interview-455">Interview with Margaret Taylor</a></li>
+                        
+                        <li><a href="#%23interview-456">Interview with Marjory Turner</a></li>
+                        
+                        <li><a href="#%23interview-457">Interview with Edna Vidler</a></li>
+                        
+                        <li><a href="#%23interview-458">Interview with Amelia Vincent</a></li>
+                        
+                        <li><a href="#%23interview-459">Interview with Audrey Watson</a></li>
+                        
+                        <li><a href="#%23interview-460">Interview with Joy Willis</a></li>
+                        </ul></td>
             </tr><tr><th colspan="2" style="text-align:center">Items that reference this one</th><tr><tr>
-            <th style="text-align:left;" class="prop">conformsTo<span>&nbsp;</span><a href="http://purl.org/dc/terms/conformsTo">[?]</a></th>
+            <th style="text-align:left;" class="prop">hasMember<span>&nbsp;</span><a href="http://pcdm.org/models#hasMember">[?]</a></th>
             <td style='text-align:left'><a href="#./">Farms to Freeways Example Dataset</a></td>
             </tr></tbody>
             </table>
