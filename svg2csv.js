@@ -2,9 +2,10 @@
 const fs = require("fs");
 const path = require("path");
 
-var csv = "time\tspeaker\ttext"
+var csv = `"time","speaker","text", "notes`;
 
 var lineNum = 0;
+var started = false;
 async function main(){
     for (let f of fs.readdirSync("./svgfiles")) {
         if (f.match("\.svg")) {
@@ -26,27 +27,33 @@ async function main(){
                 line = line.replace(/^\d+$/);
                 line = line.replace(/&apos;/, "'");
                 line = line.replace(/&apos;/, "'");
+                line = line.replace(/"/, `""`);
 
 
                 
 
                 if (!line) {speaker = lastSpeaker}
                 if (line.match(/^\d*\.\d*\s+$/)) {
-                    timecode = line;
+                    timecode = line.replace(/\s+/, "");
+                    started = true;
                     line = "";
-                    csv += `\n${timecode}\t${speaker}\t`
+                    csv += `"\n"${timecode}","${speaker}","`
                 } else if (!(speaker === lastSpeaker)) {
-                    csv += `\n\t${speaker}\t${line}`
+                    if (started) {
+                        csv += `"\n"","${speaker}","${line}`;
+                    } else {
+                        csv += `"\n"","","", "${line}`;
+                    }
 
                 } else if (line) {
                     csv += line
                 }
-                lastSpeaker = speaker;
-
-            
+                lastSpeaker = speaker;         
 
         }
+        csv += `"`;
     }
+    console.log(csv)
    fs.writeFileSync(path.join("csvfiles", f.replace(".svg",".csv")), csv)
 }
 
