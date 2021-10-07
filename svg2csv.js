@@ -19,7 +19,7 @@ async function main(){
 
                 if (line.match(`font-weight="700"`)) {
                     speaker = "A"
-                } else if (lineNum)  {
+                } else   {
                     speaker = "B"
                 }
                 line = line.replace(/<.*?>/g, "");
@@ -53,7 +53,7 @@ async function main(){
         }
         csv += `"`;
     }
-    console.log(csv)
+    //console.log(csv)
    fs.writeFileSync(path.join("csvfiles", f.replace(".svg",".csv")), csv)
 }
 

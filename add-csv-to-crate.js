@@ -180,6 +180,12 @@ async function main() {
     for (let extra of schemaStuff) {
         crate.addItem(extra);
       }
+
+    const schema = JSON.parse(JSON.stringify(schemaTemplate));
+    schema["@id"] = `#$table_schema`;
+    const root = crate.getRootDataset();
+
+    schema["name"] = `Table schema for ${root.name} `;
     for (let item of crate.getGraph()) {
         if (item["@type"] === "CorpusItem") {
             for (let part of item.hasPart) {
@@ -213,9 +219,7 @@ async function main() {
                             console.log(err);
                         }
 
-                        const schema = JSON.parse(JSON.stringify(schemaTemplate));
-                        schema["@id"] = `#${newFile["@id"]}_schema`;
-                        schema["name"] = `Table schema for ${newFile.name}`;
+                       
                         newFile["csvw:tableSchema"] = {"@id": schema["@id"]};
 
                         var existingSchema = crate.getItem(schema["@id"]);
