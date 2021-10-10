@@ -5,7 +5,6 @@ const fs = require("fs");
 const _ = require("lodash");
 const inputFile = "./input/ro-crate-metadata.json"
 const outputFile = "./output/ro-crate-metadata.json"
-const csvdir = "./csvfiles"
 
 
 
@@ -215,27 +214,50 @@ async function main(){
         "@id": '#interviews',
         "name": "Interviews",
         "@type": "SubCorpus",
-        "description": "Interview items include audio and transripts",
-       
+        "description": "Interview items include audio and transcripts", 
         "hasMember": []
     }
     for (let item of _.clone(input.getGraph())) {
         if (item["@type"].includes("Interview Transcript") ) {
             console.log(item.name[0])
-
             intervieweeID = names[item.interviewee[0]];
             if (!intervieweeID) {
                 console.log("Cant find", item.interviewee)
             }
             
+            const audio = input.getItem(item.transcriptOf["@id"]);
+            console.log(audio.hasFile[0]["@id"])
+
+            const audioFile = input.getItem(audio.hasFile[0]["@id"]);
+            // Copy stuff to audioFile
+            audioFile.originalTapeStock = audio.originalTapeStock;
+            audioFile.originalFormat = audio.originalFormat;
+            audioFile.cassetteLabelNotes = audio.cassetteLabelNotes;
+            audioFile.ingestNotes = audio.ingestNotes;
+            audioFile.duration = audio.duration;
+            audioFile.bitrate = audio["bitRate/Frequency"];
+
             const newItem = {
-                "@id": `#interview-${item["@id"]}`,
-                "@type": "CorpusItem",
-                "name": item.name[0].replace(/.*interview/,"Interview"),
-                "interviewee": {"@id": intervieweeID},
-    
-                "hasPart": [{"@id": item["@id"]},{"@id": item.transcriptOf["@id"]}]
+              "@id": `#interview-${item["@id"]}`,
+              "@type": ["RepositoryObject", "TextDialogue"],
+              "name": item.name[0].replace(/.*interview/,"Interview"),
+              "speaker": {"@id": intervieweeID},
+              "hasFile": [{"@id": audioFile["@id"]}],
+              dateCreated: item.dateCreated,
+              interviewer: item.interviewer,
+              publisher: item.publisher,
+              license: item.licence,
+              contentLocation: item.contentLocation,
+              description: item.description
+          }
+          for (let f of item.hasFile) {
+            const file = input.getItem(f["@id"]);
+            if (f["@id"].endsWith(".pdf") || f["@id"].endsWith(".csv")) {
+              file["@type"] = ["File", "OrthographicTranscription"]
             }
+            newItem.hasFile.push({"@id": f["@id"]});
+
+          }
             input.addItem(newItem)
             interviews.hasMember.push({"@id": newItem["@id"]});
             
@@ -250,10 +272,38 @@ async function main(){
             newParts.push(item);
         }
     }
-    root.hasMember = [{"@id": interviews["@id"]}];
-    root.hasPart = newParts;
+
+    root.hasMember = newParts;
+    const filesDir = {"@type": "Dataset", "@id": "files", "name": "Files", "description": "Files downloaded from Omeka", "hasPart": []};
+    root.hasPart =  [{"@id": filesDir["@id"]}];
+    const newGraph = [];
+    input.addItem(filesDir)
     input.addItem(interviews)
-    console.log(root.hasPart);
+    for (let item of input.getGraph()) {
+      if (item["@type"] === "File") {
+        filesDir.hasPart.push({"@id": item["@id"]})
+      }
+      if (input.utils.asArray(item["@type"]).includes("Person") ) {
+        delete item.primaryTopicOf;
+      } 
+      if ( input.utils.asArray(item["@type"]).includes("Interview Transcript") ||
+                 input.utils.asArray(item["@type"]).includes("Sound") ) {
+                   console.log("deleting", item)
+        } else {
+          newGraph.push(item);
+        }
+        
+    
+      
+    }
+    input.json_ld["@graph"]= newGraph;
+
+
+    root.hasMember.push({"@id": interviews["@id"]});
+    root.hasPart = [{"@id": filesDir["@id"]}];
+    // Clean up crate - remove unwanted Repo Objects
+
+    
  
     fs.writeFileSync(outputFile, JSON.stringify(input.getJson(), null, 2))
 

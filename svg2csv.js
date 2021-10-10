@@ -2,16 +2,18 @@
 const fs = require("fs");
 const path = require("path");
 
-var csv = `"time","speaker","text", "notes`;
 
-var lineNum = 0;
 var started = false;
+
 async function main(){
     for (let f of fs.readdirSync("./svgfiles")) {
         if (f.match("\.svg")) {
-            const text = fs.readFileSync(path.join("svgfiles", f)).toString();
-            var lastSpeaker
+            var rows = [];
+            var currentRow = {text: "", speaker: "", notes: "", timecode: ""};
 
+            const text = fs.readFileSync(path.join("svgfiles", f)).toString();
+
+            var lastSpeaker
             for (let line of text.split("\n")) {
                 //console.log(line)
                 var speaker
@@ -37,23 +39,45 @@ async function main(){
                     timecode = line.replace(/\s+/, "");
                     started = true;
                     line = "";
-                    csv += `"\n"${timecode}","${speaker}","`
+                    rows.push(currentRow);
+                    currentRow = {text: "", speaker: "", notes: "", timecode: ""};
+
+                    currentRow.timecode = timecode
+                    currentRow.speaker = speaker 
+                    //csv += `"\n"${timecode}","${speaker}","`
                 } else if (!(speaker === lastSpeaker)) {
+                    rows.push(currentRow);
+                    currentRow = {text: "", speaker: "", notes: "", timecode: ""};
                     if (started) {
-                        csv += `"\n"","${speaker}","${line}`;
+                        currentRow.speaker = speaker
+                        currentRow.text = line
+                        //csv += `"\n"","${speaker}","${line}`;
                     } else {
-                        csv += `"\n"","","", "${line}`;
+                        currentRow.notes = line
+                        //csv += `"\n"","","", "${line}`;
                     }
 
                 } else if (line) {
-                    csv += line
+                    if (started) {
+                        currentRow.text += line
+                    } else {
+                        currentRow.notes += line
+                    }
+                    
+                    //csv += line
                 }
                 lastSpeaker = speaker;         
 
         }
-        csv += `"`;
+        //csv += `"`;
+        rows.push(currentRow)
     }
-    //console.log(csv)
+    var csv = `"time","speaker","text", "notes"\n`;
+    for (let row of rows) {
+        if (row.timecode || row.speaker || row.notes || row.text) {
+            csv += `"${row.timecode}","${row.speaker}","${row.text}","${row.notes}"\n`;
+        }
+    }
    fs.writeFileSync(path.join("csvfiles", f.replace(".svg",".csv")), csv)
 }
 

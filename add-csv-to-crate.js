@@ -186,14 +186,19 @@ async function main() {
     const root = crate.getRootDataset();
 
     schema["name"] = `Table schema for ${root.name} `;
-    for (let item of crate.getGraph()) {
-        if (item["@type"] === "CorpusItem") {
-            for (let part of item.hasPart) {
-                partItem = crate.getItem(part["@id"])
-                partItem.hasFile = crate.utils.asArray(partItem.hasFile);
-            
+    var existingSchema = crate.getItem(schema["@id"]);
+    if (existingSchema) {
+        for (let prop of Object.keys(schema)) {
+            existingSchema[prop] = schema[prop];
+        }
 
-                for (let f of partItem.hasFile) {
+    } else {
+        crate.addItem(schema);
+
+    }
+    for (let item of crate.getGraph()) {
+        if (crate.utils.asArray(item["@type"]).includes("TextDialogue")) {
+                for (let f of item.hasFile) {
                     filePath = f["@id"];
                     if (filePath.match(/\.pdf/)) {
                         csvPath = filePath.replace(/\.pdf$/, ".csv")
@@ -202,19 +207,19 @@ async function main() {
                             newFile = {
                                 "@id": csvPath,
                                 "name": `${item.name} full text transcription`,
+                                "@type": ["File", "OrthographicTranscription"]
                             }
                             crate.addItem(newFile);
-                            partItem.hasFile.push({"@id": newFile["@id"]});
+                            item.hasFile.push({"@id": newFile["@id"]});
 
 
                         }
 
                         csv = path.join(csvDir, path.basename(csvPath));
-                        newFile["@type"] =  ["File", "OrthographicTranscription"]
 
                         try {
                             await fs.copyFile(csv, path.join(cratePath, csvPath));
-                            console.log(`Copied ${csvPath} into crate`);
+                            console.log(`Copied ${csv} to crate ${path.join(cratePath, csvPath)} `);
                         } catch(err) {
                             console.log(err);
                         }
@@ -222,18 +227,7 @@ async function main() {
                        
                         newFile["csvw:tableSchema"] = {"@id": schema["@id"]};
 
-                        var existingSchema = crate.getItem(schema["@id"]);
-                        if (existingSchema) {
-                            for (let prop of Object.keys(schema)) {
-                                existingSchema[prop] = schema[prop];
-                            }
-                            console.log("Updatin' schema", schema)
-
-                        } else {
-                            console.log("Addin' schema", schema)
-                            crate.addItem(schema);
-
-                        }
+                      
                         
                         
                         
@@ -241,7 +235,7 @@ async function main() {
                     }
                 }
                 
-            }
+            
         }
     }
     await fs.writeFile(metadataPath, JSON.stringify(crate.getJson(), null, 2));

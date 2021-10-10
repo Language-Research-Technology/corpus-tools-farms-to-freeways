@@ -22,7 +22,8 @@
     "lodash": "^4.17.21",
     "pdf-to-json": "^0.1.0",
     "pdf2json": "^1.2.4",
-    "pdfjs-dist": "^2.9.359",
+    "pdf2md": "^1.0.2",
+    "pdfjs-dist": "^2.10.377",
     "ro-crate": "^2.0.2"
   }
 }
