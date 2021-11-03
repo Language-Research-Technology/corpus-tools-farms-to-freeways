@@ -12,19 +12,17 @@ These tools work on the resulting RO-Crate.
 
 ## Convert the metadata file from a plain-old crate to being a corpus
 
--  Copy the `ro-crate-metadata.json` file from the Farms to Freeways crate into `input`.
+Assuming there is a copy of the Farms to Freeways data in cloudstor.
 
 -  Run the script.
 
     ```
-    node convert.js
+    make repo
     ```
 
--  Copy the resulting new file back into the farms to freeways crate.
 
+## Making CSV file
 
-
-## OPTIONAL / Add CSV files with the conversation data
 
 This work has all been done and is not automated but here are notes about how it was done.
 
@@ -52,9 +50,9 @@ Run `svg2csv` to create csv files in `csvfiles/`
 node svg2csv.js
 ```
 
-Finally add the CSV files into the crate where farms_to_freeways/ is the RO-Crate directory for the data downloaded from Omeka.
+copy the CSV files to cloudstor
 
-```
-node add-csv-to-crate.js -c farms_to_freeways/  -d csvfiles 
-```
+ ```
+rsync csvfiles/*  ~/cloudstor/atap-repo-misc/farms_to_freeways_csv_files/ -ruvi
+ ```
 

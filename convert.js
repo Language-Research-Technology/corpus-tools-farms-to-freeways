@@ -1,11 +1,14 @@
-const ROCrate = require("ro-crate").ROCrate;
+const {ROCrate, Provenance} = require('language-data-node-tools');
 const {program} = require('commander');
 program.version('0.0.1');
-const fs = require("fs");
+const fs = require("fs-extra");
 const _ = require("lodash");
-const inputFile = "./input/ro-crate-metadata.json"
-const outputFile = "./output/ro-crate-metadata.json"
+const oniOcfl = require("oni-ocfl");
+const tmp = require('tmp');
+const path = require('path');
 
+
+const prov = new Provenance();
 
 
 const schemaStuff = [
@@ -173,21 +176,120 @@ const schemaStuff = [
         ],
         "name": "Schema for ..."
       }
+  
+
+  async function addCSV(opts, crate, corpusCrateDir) {
+        const csvDir = opts.dataDir;
+        const root = crate.getRootDataset();
+        for (let extra of schemaStuff) {
+            crate.addItem(extra);
+          }
     
+        const schema = JSON.parse(JSON.stringify(schemaTemplate));
+        schema["@id"] = `#$table_schema`;
     
+        schema["name"] = `Table schema for ${root.name} `;
+        var existingSchema = crate.getItem(schema["@id"]);
+        if (existingSchema) {
+            for (let prop of Object.keys(schema)) {
+                existingSchema[prop] = schema[prop];
+            }
+    
+        } else {
+            crate.addItem(schema);
+    
+        }
+        for (let item of crate.getGraph()) {
+            if (crate.utils.asArray(item["@type"]).includes("TextDialogue")) {
+                    for (let f of item.hasFile) {
+                        filePath = f["@id"];
+                        if (filePath.match(/\.pdf/)) {
+                            csvPath = filePath.replace(/\.pdf$/, ".csv")
+                            var newFile = crate.getItem(csvPath);
+                            if (!newFile) {
+                                newFile = {
+                                    "@id": csvPath,
+                                    "name": `${item.name} full text transcription`,
+                                    "@type": ["File", "OrthographicTranscription"]
+                                }
+                                crate.addItem(newFile);
+                                item.hasFile.push({"@id": newFile["@id"]});
+                            }
+    
+                            csv = path.join(csvDir, path.basename(csvPath));
+                            console.log(`Copying ${csv} to crate ${path.join(corpusCrateDir, csvPath)} `);
+
+                            try {
+                                const newFile = path.join(corpusCrateDir, csvPath);
+                                fs.ensureFileSync(newFile);
+                                await fs.copyFile(csv, newFile);
+                                console.log(`Copied ${csv} to crate ${path.join(corpusCrateDir, csvPath)} `);
+                            } catch(err) {
+                                console.log(err);
+                            }
+    
+                           
+                            newFile["csvw:tableSchema"] = {"@id": schema["@id"]};
+    
+                          
+                            
+                            
+                            
+                            break;
+                        }
+                    }
+                    
+                
+            }
+        }
+    
+    }
+
+  async function connectRepo(repoPath) {
+      const repo = await oniOcfl.connectRepo(repoPath);
+      return repo;
+    
+    }
 
 async function main(){
 
-    program.option('-c, --crate-path <type>', 'Path to RO-crate ')
-    .option('-d, --csv-dir <type>', 'Path to directory of CSV files')
+  program.option('-r, --repo-path <type>', 'Path to OCFL repository')
+  .option('-n, --repo-name <type>', 'Name of OCFL repository')
+  .option('-s, --namespace <ns>', 'namespace for ARCP IDs')
+  .option('-c, --corpus-name <ns>', 'Name of this corpus/collection (if not in template)')
+  .option('-t, --template <dirs>', 'RO-Crate directory on which to base this the RO-Crate metadata file will be used as a base and any files copied in to the new collection crate')
+  .option('-d --data-dir <dirs>', "Directory of data files")
+  .option('-p --temp-path <dirs>', 'Temporary Directory Path')
     program.parse(process.argv);
     const opts = program.opts();
+    const repoPath = opts.repoPath;
+    const repoName = opts.repoName;
+    const dataDir = opts.dataDir;
+    const namespace = opts.namespace; 
+    const corpusName = opts.corpusName; // Not used here
+    const templateDir = opts.template; 
+    const tempDirPath = opts.tempPath || 'temp';
+
+
+    const repo = await connectRepo(repoPath);
+
+
+
+    if (!fs.existsSync(tempDirPath)) {
+      fs.mkdirSync(tempDirPath);
+    }
+    console.log(`Writing temp output in: ${tempDirPath} it may not be gracefully deleted`);
+    const tmpobj = tmp.dirSync({tmpdir: tempDirPath});
+    const corpusCrateDir = tmpobj.name;
+
     
-    const input = new ROCrate(JSON.parse(fs.readFileSync(inputFile)));
-    input.index();
-    const root = input.getRootDataset();
-    root["@type"] = input.utils.asArray(root["@type"]);
-    root["@type"].push("Corpus");
+ 
+    const inputFile = path.join(templateDir, "ro-crate-metadata.json");
+    const corpusCrate = new ROCrate(JSON.parse(fs.readFileSync(inputFile)));
+    corpusCrate.index();
+    const root = corpusCrate.getRootDataset();
+    root["@type"] = corpusCrate.utils.asArray(root["@type"]);
+    root["@type"].push("RepositoryCollection");
 
  
     // Add profile stuff
@@ -201,7 +303,7 @@ async function main(){
 
     // Index by title
     const names = {};
-    for (let item of input.getGraph()) {
+    for (let item of corpusCrate.getGraph()) {
         if (item.name) {
             names[item.name] = item["@id"];
         }
@@ -217,7 +319,7 @@ async function main(){
         "description": "Interview items include audio and transcripts", 
         "hasMember": []
     }
-    for (let item of _.clone(input.getGraph())) {
+    for (let item of _.clone(corpusCrate.getGraph())) {
         if (item["@type"].includes("Interview Transcript") ) {
             console.log(item.name[0])
             intervieweeID = names[item.interviewee[0]];
@@ -225,10 +327,10 @@ async function main(){
                 console.log("Cant find", item.interviewee)
             }
             
-            const audio = input.getItem(item.transcriptOf["@id"]);
+            const audio = corpusCrate.getItem(item.transcriptOf["@id"]);
             console.log(audio.hasFile[0]["@id"])
 
-            const audioFile = input.getItem(audio.hasFile[0]["@id"]);
+            const audioFile = corpusCrate.getItem(audio.hasFile[0]["@id"]);
             // Copy stuff to audioFile
             audioFile.originalTapeStock = audio.originalTapeStock;
             audioFile.originalFormat = audio.originalFormat;
@@ -251,14 +353,14 @@ async function main(){
               description: item.description
           }
           for (let f of item.hasFile) {
-            const file = input.getItem(f["@id"]);
+            const file = corpusCrate.getItem(f["@id"]);
             if (f["@id"].endsWith(".pdf") || f["@id"].endsWith(".csv")) {
               file["@type"] = ["File", "OrthographicTranscription"]
             }
             newItem.hasFile.push({"@id": f["@id"]});
 
           }
-            input.addItem(newItem)
+            corpusCrate.addItem(newItem)
             interviews.hasMember.push({"@id": newItem["@id"]});
             
 
@@ -266,7 +368,7 @@ async function main(){
     }
     const newParts = [];
     for (let item of root.hasPart) {
-        const part = input.getItem(item["@id"]);
+        const part = corpusCrate.getItem(item["@id"]);
         //console.log(part)
         if (!part.name[0].match(/Interview/) ){
             newParts.push(item);
@@ -277,17 +379,17 @@ async function main(){
     const filesDir = {"@type": "Dataset", "@id": "files", "name": "Files", "description": "Files downloaded from Omeka", "hasPart": []};
     root.hasPart =  [{"@id": filesDir["@id"]}];
     const newGraph = [];
-    input.addItem(filesDir)
-    input.addItem(interviews)
-    for (let item of input.getGraph()) {
+    corpusCrate.addItem(filesDir)
+    corpusCrate.addItem(interviews)
+    for (let item of corpusCrate.getGraph()) {
       if (item["@type"] === "File") {
         filesDir.hasPart.push({"@id": item["@id"]})
       }
-      if (input.utils.asArray(item["@type"]).includes("Person") ) {
+      if (corpusCrate.utils.asArray(item["@type"]).includes("Person") ) {
         delete item.primaryTopicOf;
       } 
-      if ( input.utils.asArray(item["@type"]).includes("Interview Transcript") ||
-                 input.utils.asArray(item["@type"]).includes("Sound") ) {
+      if ( corpusCrate.utils.asArray(item["@type"]).includes("Interview Transcript") ||
+                 corpusCrate.utils.asArray(item["@type"]).includes("Sound") ) {
                    console.log("deleting", item)
         } else {
           newGraph.push(item);
@@ -296,16 +398,47 @@ async function main(){
     
       
     }
-    input.json_ld["@graph"]= newGraph;
+
+    // EW!!!! NO! TODO:
+    corpusCrate.json_ld["@graph"]= newGraph;
+    corpusCrate.index();
 
 
     root.hasMember.push({"@id": interviews["@id"]});
     root.hasPart = [{"@id": filesDir["@id"]}];
     // Clean up crate - remove unwanted Repo Objects
 
-    
- 
-    fs.writeFileSync(outputFile, JSON.stringify(input.getJson(), null, 2))
+    // Copy files across
+    for (let item of corpusCrate.getGraph()) {
+      if (corpusCrate.utils.asArray(item["@type"]).includes("File")) {
+
+        filePath = path.join(templateDir, item["@id"]);
+        const newFile = path.join(corpusCrateDir, item["@id"]);
+
+        console.log(`Copying ${filePath} to crate ${newFile} `);
+
+        try {
+            fs.ensureFileSync(newFile);
+            await fs.copyFile(filePath, newFile);
+            console.log(`Copied ${filePath} to crate ${newFile} `);
+        } catch(err) {
+            console.log(err);
+        }
+
+      }
+    }
+
+    await addCSV(opts, corpusCrate, corpusCrateDir);
+
+
+    const  corpusID = corpusCrate.arcpId(namespace, "root", "description");
+    root.identifier = corpusID;
+    corpusCrate.addIdentifier({name: repoName, identifier: root.identifier});
+    corpusCrate.addProvenance(prov);
+    corpusCrate.addLgProfile("Collection");
+    const outputFile = path.join(corpusCrateDir, "ro-crate-metadata.json");
+    fs.writeFileSync(outputFile, JSON.stringify(corpusCrate.getJson(), null, 2));
+    await oniOcfl.checkin(repo, repoName, corpusCrateDir, corpusCrate, "md5", "ro-crate-metadata.json");
 
     // Make a new structure
 
