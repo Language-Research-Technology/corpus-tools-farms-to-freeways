@@ -373,8 +373,9 @@ async function main() {
   // Copy files across
   for (let item of corpusCrate.getGraph()) {
     if (corpusCrate.utils.asArray(item["@type"]).includes("File")) {
-
-      filePath = path.join(templateDir, item["@id"]);
+      //TODO: Shouldn't it be an encoding or mime type?
+      item['fileFormat'] = getExtension(item['@id']);
+      const filePath = path.join(templateDir, item["@id"]);
       const newFile = path.join(corpusCrateDir, item["@id"]);
 
       console.log(`Copying ${ filePath } to crate ${ newFile } `);
@@ -398,9 +399,16 @@ async function main() {
   corpusCrate.addLgProfile("Collection");
   const outputFile = path.join(corpusCrateDir, "ro-crate-metadata.json");
   fs.writeFileSync(outputFile, JSON.stringify(corpusCrate.getJson(), null, 2));
-  await oniOcfl.checkin(repo, repoName, corpusCrateDir, corpusCrate, "md5", "ro-crate-metadata.json");
+  const out = await oniOcfl.checkin(repo, repoName, corpusCrateDir, corpusCrate, "md5", "ro-crate-metadata.json");
   // Make a new structure
+  console.log(`Finished writing ocfl: ${out}`);
+}
 
+//Very efficient! no regex
+function getExtension(filename) {
+  const ext = filename.split('.').pop();
+  if (ext === filename) return "";
+  return ext;
 }
 
 main();
