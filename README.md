@@ -10,18 +10,20 @@ Peter Sefton exported the data into an RO-Crate, using [this process](https://gi
 
 These tools work on the resulting RO-Crate.
 
+
+
 ## Convert the metadata file from a plain-old crate to being a corpus
 
-Assuming there is a copy of the Farms to Freeways data in cloudstor.
+Assuming there is a copy of the Farms to Freeways data as exported from Omeka in cloudstor.
 
 -  Run the script.
 
     ```
-    make repo
+    make repo   
     ```
 
 
-## Making CSV file
+## Making CSV files from PDF transcripts
 
 
 This work has all been done and is not automated but here are notes about how it was done.

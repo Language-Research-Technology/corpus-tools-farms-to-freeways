@@ -4,8 +4,8 @@ program.version('0.0.1');
 const fs = require("fs-extra");
 const _ = require("lodash");
 const oniOcfl = require("oni-ocfl");
-const tmp = require('tmp');
-const path = require('path');
+  const tmp = require('tmp');
+  const path = require('path');
 
 
 const prov = new Provenance();
@@ -114,7 +114,9 @@ const schemaStuff = [
         "@type": "csvw:Column",
         "csvw:datatype": "string",
         "description": "Which of the participants is talking in that particular utterance. ",
-        "name": "Role"
+        "name": "Role",
+        "sameAs": {"@id": "http://www.language-archives.org/REC/role.html#speaker"}
+
       },
       {
         "@id": "#start_time",
