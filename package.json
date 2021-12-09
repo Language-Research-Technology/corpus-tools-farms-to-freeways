@@ -21,7 +21,7 @@
     "commander": "^8.2.0",
     "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
-    "oni-ocfl": "git+https://github.com/Language-Research-Technology/oni-ocfl.git",
+    "oni-ocfl": "git+https://github.com/Language-Research-Technology/oni-ocfl.git#feature-collector",
     "pdf-to-json": "^0.1.0",
     "pdf2json": "^1.2.4",
     "pdf2md": "^1.0.2",

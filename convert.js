@@ -4,8 +4,8 @@ program.version('0.0.1');
 const fs = require("fs-extra");
 const _ = require("lodash");
 const oniOcfl = require("oni-ocfl");
-  const tmp = require('tmp');
-  const path = require('path');
+const tmp = require('tmp');
+const path = require('path');
 
 
 const prov = new Provenance();
@@ -44,7 +44,7 @@ const schemaStuff = [
         "csvw:datatype": "string",
         "description": "Which of the participants is talking in that particular utterance. ",
         "name": "Role",
-        "sameAs": {"@id": "http://www.language-archives.org/REC/role.html#speaker"}
+        "sameAs": { "@id": "http://www.language-archives.org/REC/role.html#speaker" }
 
       },
       {
@@ -401,7 +401,7 @@ async function main() {
   fs.writeFileSync(outputFile, JSON.stringify(corpusCrate.getJson(), null, 2));
   const out = await oniOcfl.checkin(repo, repoName, corpusCrateDir, corpusCrate, "md5", "ro-crate-metadata.json");
   // Make a new structure
-  console.log(`Finished writing ocfl: ${out}`);
+  console.log(`Finished writing ocfl: ${ out }`);
 }
 
 //Very efficient! no regex
