@@ -1,8 +1,9 @@
 const {Collector} = require("oni-ocfl");
 const {languageProfileURI} = require("language-data-node-tools");
 const _ = require("lodash");
-const path = require("path");
-const { getItem } = require("../oni-ocfl/lib/ocfl-tools");
+const oniOcfl = require("oni-ocfl");
+const tmp = require('tmp');
+const path = require('path');
 
 
 
@@ -169,6 +170,13 @@ async function main() {
  
   corpus.addToRepo();
 
+}
+
+//Very efficient! no regex
+function getExtension(filename) {
+  const ext = filename.split('.').pop();
+  if (ext === filename) return "";
+  return ext;
 }
 
 main();
