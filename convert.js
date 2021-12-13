@@ -1,8 +1,6 @@
 const {Collector} = require("oni-ocfl");
 const {languageProfileURI} = require("language-data-node-tools");
 const _ = require("lodash");
-const oniOcfl = require("oni-ocfl");
-const tmp = require('tmp');
 const path = require('path');
 
 
