@@ -137,7 +137,7 @@ async function main() {
   for (let item of corpusCrate.getGraph()) {
     if (item["@type"] === "File") {
       filesDir.hasPart.push({ "@id": item["@id"] })
-      corpus.addFile(item, path.join(coll.templateCrateDir, item["@id"]))
+      corpus.addFile(item, coll.templateCrateDir)
     }
     if (corpusCrate.utils.asArray(item["@type"]).includes("Person")) {
       delete item.primaryTopicOf;
