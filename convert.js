@@ -25,7 +25,7 @@ async function addCSV(object) {
             object.crate.addItem(newFile);
             item.hasFile.push({ "@id": newFile["@id"] });
           }
-          await object.addFile(newFile, path.join(object.collector.dataDir, path.basename(csvPath)));
+          await object.addFile(newFile, object.collector.dataDir, path.basename(csvPath));
 
           break;
         }
@@ -77,7 +77,7 @@ async function main() {
       }
 
       const audio = corpusCrate.getItem(item.transcriptOf["@id"]);
-      console.log(audio.hasFile[0]["@id"])
+      //console.log(audio.hasFile[0]["@id"])
 
       const audioFile = corpusCrate.getItem(audio.hasFile[0]["@id"]);
       // Copy stuff to audioFile
