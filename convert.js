@@ -1,5 +1,5 @@
 const {Collector} = require("oni-ocfl");
-const {languageProfileURI} = require("language-data-node-tools");
+const {languageProfileURI, Languages} = require("language-data-node-tools");
 const _ = require("lodash");
 const path = require('path');
 const { DEFAULT_ECDH_CURVE } = require("tls");
@@ -9,7 +9,7 @@ const fs = require("fs");
 
 async function addCSV(object) {
   
-  for (let item of object.crate.getAll()) {
+  for (let item of object.crate.getGraph()) {
     if (object.crate.utils.asArray(item["@type"]).includes("TextDialogue")) {
       for (let f of item.hasFile) {
         filePath = f["@id"];
@@ -37,6 +37,9 @@ async function addCSV(object) {
 
 
 async function main() {
+  const languages = new Languages();
+  await languages.fetch();
+  const engLang = languages.getLanguage("English");
 
   const coll = new Collector(); // Get all the paths etc from commandline
   await coll.connect();
@@ -46,6 +49,7 @@ async function main() {
   corpus.mintArcpId("root", "collection")
   const corpusCrate = corpus.crate;
   corpusCrate.toGraph();
+  
 
   corpusCrate.addProfile(languageProfileURI("Collection"));
   // Headers are "time","speaker","text","notes"
@@ -67,14 +71,14 @@ async function main() {
     "hasMember": []
   }
   const names = {};
-  for (let item of corpusCrate.getAll()){
+  for (let item of corpusCrate.getGraph()){
     if (item["@type"].includes("Person")) {
       names[item.name[0]] = item;
     }
   }
 
   var newItem;
-  for (let item of corpusCrate.getAll()) {
+  for (let item of corpusCrate.getGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
 
       corpusCrate.changeGraphId(item, corpusCrate.arcpId(coll.namespace, "collection", item.name[0].toLowerCase().replace(/\W/g,"")));
@@ -82,12 +86,13 @@ async function main() {
     } 
   }
   
-  for (let item of corpusCrate.getAll()) {
+  for (let item of corpusCrate.getGraph()) {
     if (item["@type"].includes("Interview Transcript")) {
       intervieweeID = names[item.interviewee[0]];
       if (!intervieweeID) {
         console.log("Cant find", item.interviewee)
       }
+      console.log(item);
       const audio = corpusCrate.getItem(item.transcriptOf[0]["@id"]);
       //console.log(audio.hasFile[0]["@id"])
 
@@ -111,7 +116,8 @@ async function main() {
         publisher: item.publisher[0],
         license: item.license[0],
         contentLocation: item.contentLocation[0],
-        description: item.description[0]
+        description: item.description[0],
+        language: {"@id": engLang["@id"]} 
       }
       for (let f of item.hasFile) {
         const file = corpusCrate.getItem(f["@id"]);
@@ -146,7 +152,7 @@ async function main() {
 
   //corpusCrate.addItem(filesDir)
   //corpusCrate.addItem(interviews)
-  for (let item of corpusCrate.getAll()) {
+  for (let item of corpusCrate.getGraph()) {
     if (item["@type"].includes("File")) {
       corpusCrate.pushValue(filesDir, "hasPart", item)
       corpus.addFile(item, coll.templateCrateDir, null, false)
