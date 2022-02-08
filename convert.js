@@ -35,7 +35,6 @@ async function addCSV(object) {
   }
 }
 
-
 async function main() {
   const languages = new Languages();
   await languages.fetch();
