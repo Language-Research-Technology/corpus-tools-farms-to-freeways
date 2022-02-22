@@ -1,9 +1,11 @@
 #! /bin/bash
 # MakeFile for creating Farms To Freeways corpus repo
-BASE_DATA_DIR=/Users/moises/cloudstor/Shared/atap-repo-misc
+# Override BASE_DATA_DIR, REPO_OUT_DIR, BASE_TMP_DIR to point to the location of your datasets
 
-REPO_OUT_DIR=/Users/moises/Library/Mobile Documents/com~apple~CloudDocs/source/github/Language-Research-Technology/oni/api/.dev.nosync/ocfl
-BASE_TMP_DIR=/Users/moises/dump/atap-ocfl/tools-temp
+BASE_DATA_DIR=/farms-to-freeways
+
+REPO_OUT_DIR=./ocfl-repo
+BASE_TMP_DIR=temp
 
 
 REPO_NAME=ATAP

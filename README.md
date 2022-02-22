@@ -10,17 +10,18 @@ Peter Sefton exported the data into an RO-Crate, using [this process](https://gi
 
 These tools work on the resulting RO-Crate.
 
+## Install
 
+Then install
+```
+npm install
+```
+Then add language-data-node-tools
 
-## Convert the metadata file from a plain-old crate to being a corpus
-
-Assuming there is a copy of the Farms to Freeways data as exported from Omeka in cloudstor.
-
--  Run the script.
-
-    ```
-    make repo   
-    ```
+Assuming you have [this](https://github.com/Language-Research-Technology/language-data-node-tools) checked out and done npm link inside its directory
+```
+npm link language-data-node-tools 
+```
 
 
 ## Making CSV files from PDF transcripts
@@ -57,4 +58,14 @@ copy the CSV files to cloudstor
  ```
 rsync csvfiles/*  ~/cloudstor/atap-repo-misc/farms_to_freeways_csv_files/ -ruvi
  ```
+
+## Convert the metadata file from a plain-old crate to being a corpus
+
+Assuming there is a copy of the Farms to Freeways data as exported from Omeka in cloudstor.
+
+-  Run the script.
+
+```bash
+make BASE_DATA_DIR=/multilingual/repo REPO_OUT_DIR=/your/ocfl-repo BASE_TMP_DIR=/your/temp
+```
 
