@@ -66,6 +66,6 @@ Assuming there is a copy of the Farms to Freeways data as exported from Omeka in
 -  Run the script.
 
 ```bash
-make BASE_DATA_DIR=/farms-to-freeways/repo REPO_OUT_DIR=/your/ocfl-repo BASE_TMP_DIR=/your/temp
+make BASE_DATA_DIR=/farms-to-freeways/data REPO_OUT_DIR=/your/ocfl-repo BASE_TMP_DIR=/your/temp
 ```
 
