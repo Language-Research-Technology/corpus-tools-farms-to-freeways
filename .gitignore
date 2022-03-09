@@ -107,3 +107,5 @@ dist
 temp
 ocfl-repo
 .DS_Store
+make_run.sh
+test.json

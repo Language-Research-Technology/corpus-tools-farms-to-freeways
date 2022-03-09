@@ -3,6 +3,7 @@
 # Override BASE_DATA_DIR, REPO_OUT_DIR, BASE_TMP_DIR to point to the location of your datasets
 
 BASE_DATA_DIR=/farms-to-freeways
+REPO_SCRATCH_DIR=scratch
 
 REPO_OUT_DIR=./ocfl-repo
 BASE_TMP_DIR=temp
@@ -17,9 +18,10 @@ TEMP_DIR=${BASE_TMP_DIR}/temp
 .DEFAULT_GOAL := repo
 
 repo:
-	node convert -r "${REPO_OUT_DIR}/" \
+	node index.js -r "${REPO_OUT_DIR}/" \
 	-t "${TEMPLATE_DIR}" -n ${REPO_NAME} \
-	-s ${NAMESPACE} -d "${DATA_DIR}"
+	-s ${NAMESPACE} -d "${DATA_DIR}"\
+	-z "${REPO_SCRATCH_DIR}"
 
 clean:
 	rm -rf "${TEMP_DIR}"

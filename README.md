@@ -13,13 +13,14 @@ These tools work on the resulting RO-Crate.
 ## Install
 
 Then install
-```
+```bash
 npm install
 ```
 Then add language-data-node-tools
 
 Assuming you have [this](https://github.com/Language-Research-Technology/language-data-node-tools) checked out and done npm link inside its directory
-```
+
+```bash
 npm link language-data-node-tools 
 ```
 
@@ -37,25 +38,25 @@ To extract text from the PDF files in the repo first use open office:
 
 On a mac, this command will create a bunch of SVG files in the working directory.
 
-```
+```bash
 find farms-to-freeways/ -name "*.pdf" -exec /Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to svg {} \;
 ```
 
 Move these into an svgfiles directory:
 
-```
+```bash
 mv *.svg svgfiles/
 ```
 
 Run `svg2csv` to create csv files in `csvfiles/`
 
-```
+```bash
 node svg2csv.js
 ```
 
 copy the CSV files to cloudstor
 
- ```
+ ```bash
 rsync csvfiles/*  ~/cloudstor/atap-repo-misc/farms_to_freeways_csv_files/ -ruvi
  ```
 

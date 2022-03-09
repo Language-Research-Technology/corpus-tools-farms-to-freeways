@@ -12,7 +12,7 @@ async function addCSV(object) {
   for (let item of object.crate.getGraph()) {
     if (object.crate.utils.asArray(item["@type"]).includes("TextDialogue")) {
       for (let f of item.hasFile) {
-        filePath = f["@id"];
+        const filePath = f["@id"];
         if (filePath.match(/\.pdf/)) {
           var csvPath = filePath.replace(/\.pdf$/, ".csv")
           var newFile = object.crate.getItem(csvPath);
@@ -47,8 +47,6 @@ async function main() {
   const corpus = coll.newObject(coll.templateCrateDir);
   corpus.mintArcpId("root", "collection")
   const corpusCrate = corpus.crate;
-  corpusCrate.toGraph();
-  
 
   corpusCrate.addProfile(languageProfileURI("Collection"));
   // Headers are "time","speaker","text","notes"
@@ -62,7 +60,7 @@ async function main() {
   const root = corpus.rootDataset;
   root.hasMember = [];
   // Make a new collection of items based on audiofiles
-  interviews = {
+  const interviews = {
     "@id": corpusCrate.arcpId(coll.namespace, "collection", "interviews"),
     "name": "Interviews",
     "@type": "RepositoryCollection",
@@ -76,25 +74,25 @@ async function main() {
     }
   }
 
-  var newItem;
+
   for (let item of corpusCrate.getGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
-
-      corpusCrate.changeGraphId(item, corpusCrate.arcpId(coll.namespace, "collection", item.name[0].toLowerCase().replace(/\W/g,"")));
-
+      corpusCrate.changeGraphId(
+        item,
+        corpusCrate.arcpId(coll.namespace, "collection", item.name[0].toLowerCase().replace(/\W/g,""))
+      );
     } 
   }
   
   for (let item of corpusCrate.getGraph()) {
     if (item["@type"].includes("Interview Transcript")) {
-      intervieweeID = names[item.interviewee[0]];
+      const intervieweeID = names[item.interviewee[0]];
       if (!intervieweeID) {
         console.log("Cant find", item.interviewee)
       }
-      console.log(item);
+      //console.log(item);
       const audio = corpusCrate.getItem(item.transcriptOf[0]["@id"]);
       //console.log(audio.hasFile[0]["@id"])
-
       const audioFile = corpusCrate.getItem(audio.hasFile[0]["@id"]);
       // Copy stuff to audioFile
       audioFile.originalTapeStock = audio.originalTapeStock;
@@ -103,8 +101,8 @@ async function main() {
       audioFile.ingestNotes = audio.ingestNotes;
       audioFile.duration = audio.duration;
       audioFile.bitrate = audio["bitRate/Frequency"];
-      console.log(item)
-      newItem = {
+
+      let newItem = {
         "@id": corpusCrate.arcpId(coll.namespace, "interview-item", item["@id"]),
         "@type": [ "RepositoryObject", "TextDialogue" ],
         "name": [item.name[0].replace(/.*interview/, "Interview")],
@@ -124,18 +122,15 @@ async function main() {
           file["@type"] = [ "File", "OrthographicTranscription" ]
         }
         newItem.hasFile.push(file);
-
       }
       corpusCrate.pushValue(interviews, "hasMember", newItem);
-
     }
   }
   
-  for (let item of root.hasPart) {
-    const part = corpusCrate.getItem(item["@id"]);
-    //console.log(part)
+  for (let part of root.hasPart) {
+    console.log(part['@id'])
     if (!part.name[0].match(/Interview/)) {
-      corpusCrate.pushValue(root, "hasMember", item);
+      corpusCrate.pushValue(root, "hasMember", part);
     }
   }
   root.hasPart = [];
@@ -147,14 +142,16 @@ async function main() {
     "description": "Files downloaded from Omeka",
     "hasPart": []
   };
-  corpusCrate.pushValue(root, "hasPart", filesDir)
+  //TODO: reinstate this when we have new RO-Crate Library!!
+  //corpusCrate.pushValue(root, "hasPart", filesDir)
 
-  //corpusCrate.addItem(filesDir)
-  //corpusCrate.addItem(interviews)
+  // corpusCrate.addItem(filesDir)
+  // corpusCrate.addItem(interviews)
   for (let item of corpusCrate.getGraph()) {
     if (item["@type"].includes("File")) {
-      corpusCrate.pushValue(filesDir, "hasPart", item)
-      corpus.addFile(item, coll.templateCrateDir, null, false)
+      console.log(`Adding hasPart to 'Files' ${item['@id']}`);
+      //corpusCrate.pushValue(filesDir, "hasPart", item);
+      await corpus.addFile(item, coll.templateCrateDir, null, true);
     }
     if (corpusCrate.utils.asArray(item["@type"]).includes("Person")) {
       delete item.primaryTopicOf;
@@ -166,19 +163,15 @@ async function main() {
     }
   }
 
-
-
   corpusCrate.pushValue(root, "hasMember", interviews);
   // Clean up crate - remove unwanted Repo Objects
-
- 
 
   await addCSV(corpus);
 
   corpus.mintArcpId("corpus","root");
 
   fs.writeFileSync("test.json", JSON.stringify(corpusCrate.getJson(), null, 2));
-  corpus.addToRepo();
+  await corpus.addToRepo();
 
 }
 
