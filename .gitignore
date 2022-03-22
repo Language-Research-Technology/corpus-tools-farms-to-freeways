@@ -108,4 +108,4 @@ temp
 ocfl-repo
 .DS_Store
 make_run.sh
-test.json
+ro-crate_for_debug.json
