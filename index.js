@@ -1,11 +1,10 @@
-const {Collector} = require("oni-ocfl");
+const {Collector, generateArcpId} = require("oni-ocfl");
 const {languageProfileURI, Languages} = require("language-data-node-tools");
 const _ = require("lodash");
 const path = require('path');
-const { DEFAULT_ECDH_CURVE } = require("tls");
-const { fstat } = require("fs");
+const {DEFAULT_ECDH_CURVE} = require("tls");
+const {fstat} = require("fs");
 const fs = require("fs");
-
 
 async function addCSV(collector, corpusRepo) {
   for (let item of corpusRepo.crate.getFlatGraph()) {
@@ -18,14 +17,14 @@ async function addCSV(collector, corpusRepo) {
           if (!newFile) {
             newFile = {
               "@id": csvPath,
-              "name": `${ item.name } full text transcription`,
-              "@type": [ "File", "OrthographicTranscription" ]
+              "name": `${item.name} full text transcription`,
+              "@type": ["File", "OrthographicTranscription"]
             }
             corpusRepo.linkDialogueSchema(newFile);
             corpusRepo.crate.addItem(newFile);
-            item.hasFile.push({ "@id": newFile["@id"] });
+            item.hasFile.push({"@id": newFile["@id"]});
           }
-          if(!collector.debug) {
+          if (!collector.debug) {
             await corpusRepo.addFile(newFile, corpusRepo.collector.dataDir, path.basename(csvPath));
           }
           break;
@@ -45,8 +44,9 @@ async function main() {
   // Make a base corpusRepo using template
   console.log("Making from template", collector.templateCrateDir)
   const corpusRepo = collector.newObject(collector.templateCrateDir);
-  corpusRepo.mintArcpId("root", "collection")
+  corpusRepo.mintArcpId("corpus", "collection");
   const corpusCrate = corpusRepo.crate;
+  console.log(corpusCrate.rootDataset['@id']);
 
   corpusCrate.addProfile(languageProfileURI("Collection"));
   // Headers are "time","speaker","text","notes"
@@ -64,24 +64,24 @@ async function main() {
   root.hasMember = [];
 
   const names = {};
-  for (let item of corpusCrate.getFlatGraph()){
+  for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("Person")) {
       names[item.name[0]] = item;
     }
   }
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
-      const lowerNameId = item.name.toLowerCase().replace(/\W/g,"");
+      const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
       corpusCrate.changeGraphId(
         item,
-        corpusCrate.arcpId(collector.namespace, "collection", lowerNameId)
+        generateArcpId(collector.namespace, "collection", lowerNameId)
       );
-    } 
+    }
   }
 
   // Make a new collection of items based on audiofiles
   const interviews = {
-    "@id": corpusCrate.arcpId(collector.namespace, "collection", "interviews"),
+    "@id": generateArcpId(collector.namespace, "collection", "interviews"),
     "name": "Interviews",
     "@type": ["RepositoryCollection"],
     "description": "Interview items include audio and transcripts",
@@ -108,30 +108,30 @@ async function main() {
       audioFile.bitrate = audio["bitRate/Frequency"];
 
       let newItem = {
-        "@id": corpusCrate.arcpId(collector.namespace, "interview-item", item["@id"]),
-        "@type": [ "RepositoryObject", "TextDialogue" ],
+        "@id": generateArcpId(collector.namespace, "interview-item", item["@id"]),
+        "@type": ["RepositoryObject", "TextDialogue"],
         "name": [item.name.replace(/.*interview/, "Interview")],
-        "speaker": { "@id": intervieweeID },
-        "hasFile": [ { "@id": audioFile["@id"] } ],
+        "speaker": {"@id": intervieweeID},
+        "hasFile": [{"@id": audioFile["@id"]}],
         dateCreated: item.dateCreated,
         interviewer: item.interviewer,
         publisher: item.publisher,
         license: item.license,
         contentLocation: item.contentLocation,
         description: item.description,
-        language: {"@id": engLang["@id"]} 
+        language: {"@id": engLang["@id"]}
       }
       for (let f of item.hasFile) {
         const file = corpusCrate.getItem(f["@id"]);
         if (f["@id"].endsWith(".pdf") || f["@id"].endsWith(".csv")) {
-          file["@type"] = [ "File", "OrthographicTranscription" ]
+          file["@type"] = ["File", "OrthographicTranscription"]
         }
         newItem.hasFile.push(file);
       }
       corpusCrate.pushValue(interviews, "hasMember", newItem);
     }
   }
-  if(root.hasPart) {
+  if (root.hasPart) {
     for (let part of root.hasPart) {
       console.log(`root Part : ${part['@id']}`);
       if (!part.name[0].match(/Interview/)) {
@@ -154,7 +154,7 @@ async function main() {
   //corpusCrate.addItem(filesDir)
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("File")) {
-      if(!collector.debug) {
+      if (!collector.debug) {
         console.log(`Adding hasPart to 'Files' ${item['@id']}`);
         //corpusCrate.pushValue(filesDir, "hasPart", item);
         await corpusRepo.addFile(item, collector.templateCrateDir, null, true);
@@ -173,10 +173,10 @@ async function main() {
   corpusCrate.pushValue(root, "hasMember", interviews);
   // Clean up crate - remove unwanted Repo Objects
   await addCSV(collector, corpusRepo);
-  corpusRepo.mintArcpId("corpusRepo","root");
 
-  fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(corpusCrate.getJson(), null, 2));
-  if(!collector.debug) {
+  const iShouldBeFlatJSON = corpusCrate.toJSON();
+  fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(iShouldBeFlatJSON, null, 2));
+  if (!collector.debug) {
     await corpusRepo.addToRepo();
   }
 }
