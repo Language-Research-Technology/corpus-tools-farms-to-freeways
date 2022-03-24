@@ -44,7 +44,7 @@ async function main() {
   // Make a base corpusRepo using template
   console.log("Making from template", collector.templateCrateDir)
   const corpusRepo = collector.newObject(collector.templateCrateDir);
-  corpusRepo.mintArcpId("corpus", "collection");
+  corpusRepo.mintArcpId("corpus", "root");
   const corpusCrate = corpusRepo.crate;
   console.log(corpusCrate.rootDataset['@id']);
 
@@ -71,11 +71,13 @@ async function main() {
   }
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
-      const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
-      corpusCrate.changeGraphId(
-        item,
-        generateArcpId(collector.namespace, "collection", lowerNameId)
-      );
+      if(item['@id'] !== corpusCrate.rootId) {
+        const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
+        corpusCrate.changeGraphId(
+          item,
+          generateArcpId(collector.namespace, "collection", lowerNameId)
+        );
+      }
     }
   }
 
@@ -174,11 +176,13 @@ async function main() {
   // Clean up crate - remove unwanted Repo Objects
   await addCSV(collector, corpusRepo);
 
-  const flatJson = corpusCrate.toJSON();
-  fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(flatJson, null, 2));
   if (!collector.debug) {
+    console.log('Adding corpus to repository');
     await corpusRepo.addToRepo();
   }
+
+  const flatJson = corpusCrate.getJson();
+  fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(flatJson, null, 2));
 }
 
 //Very efficient! no regex
