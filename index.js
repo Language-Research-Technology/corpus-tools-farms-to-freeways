@@ -174,8 +174,8 @@ async function main() {
   // Clean up crate - remove unwanted Repo Objects
   await addCSV(collector, corpusRepo);
 
-  const iShouldBeFlatJSON = corpusCrate.toJSON();
-  fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(iShouldBeFlatJSON, null, 2));
+  const flatJson = corpusCrate.toJSON();
+  fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(flatJson, null, 2));
   if (!collector.debug) {
     await corpusRepo.addToRepo();
   }
