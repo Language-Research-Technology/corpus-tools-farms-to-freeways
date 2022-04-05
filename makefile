@@ -20,7 +20,7 @@ TEMP_DIR=${BASE_TMP_DIR}/temp
 repo:
 	node index.js -r "${REPO_OUT_DIR}/" \
 	-t "${TEMPLATE_DIR}" -n ${REPO_NAME} \
-	-s ${NAMESPACE} -d "${DATA_DIR}"\
+	-s ${NAMESPACE} -d "${DATA_DIR}" \
 	-z "${REPO_SCRATCH_DIR}"
 
 clean:
