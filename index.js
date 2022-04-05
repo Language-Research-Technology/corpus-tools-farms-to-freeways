@@ -46,6 +46,8 @@ async function main() {
   const corpusRepo = collector.newObject(collector.templateCrateDir);
   corpusRepo.mintArcpId("corpus", "root");
   const corpusCrate = corpusRepo.crate;
+  corpusCrate.rootId = generateArcpId(collector.namespace, "corpus", "root");
+
   console.log(corpusCrate.rootDataset['@id']);
 
   corpusCrate.addProfile(languageProfileURI("Collection"));
