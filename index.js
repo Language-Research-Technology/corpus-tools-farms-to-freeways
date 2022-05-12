@@ -129,7 +129,8 @@ async function main() {
 
 
        
-          //newItem.hasFile.push(file);
+          //newItem.hasFile.push(file); 
+          // File is PDF at this point
           corpusCrate.pushValue(newRepoObject, "hasFile", file );
           corpusCrate.pushValue(file, "fileOf", newRepoObject);
           corpusCrate.pushValue(audioFile, "hasAnnotation", file);
@@ -147,9 +148,6 @@ async function main() {
               
             }
             corpusRepo.crate.addItem(csvFile);
-          
-
-
             corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription`);
             corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
 
@@ -157,6 +155,10 @@ async function main() {
             corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
             corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
             corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("Orthography"));
+            corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
+            corpusCrate.pushValue(csvFile, "isAnnotationOf", audioFile);
+
+
   
             csvFile.modality = vocab.getVocabItem("Orthography");
 
@@ -164,7 +166,6 @@ async function main() {
             corpusCrate.pushValue(newRepoObject, "hasFile", csvFile);
             corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
 
-            corpusCrate.pushValue(csvFile, "isAnnotationOf", audioFile)
             //item.hasFile.push({"@id": newFile["@id"]}); --- THIS NOW ADDS THE THING TO THE WRONG PLACE!!!
           }
           if (!collector.debug) {
