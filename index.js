@@ -86,6 +86,7 @@ async function main() {
       const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
       // Copy stuff to audioFile
       corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
+      audioFile.name = `${item.name} recording (mp3)`
       audioFile.originalTapeStock = audio.originalTapeStock;
       audioFile.originalFormat = audio.originalFormat;
       audioFile.cassetteLabelNotes = audio.cassetteLabelNotes;
@@ -110,6 +111,9 @@ async function main() {
         encodingFormat: "audio/MPEG"
       }      
 
+      audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
+
+
       corpusCrate.pushValue(interviews, "hasMember", newRepoObject);
       corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
@@ -131,6 +135,7 @@ async function main() {
        
           //newItem.hasFile.push(file); 
           // File is PDF at this point
+          file.name = `${item.name} full text transcription (PDF)`
           corpusCrate.pushValue(newRepoObject, "hasFile", file );
           corpusCrate.pushValue(file, "fileOf", newRepoObject);
           corpusCrate.pushValue(audioFile, "hasAnnotation", file);
@@ -148,7 +153,7 @@ async function main() {
               
             }
             corpusRepo.crate.addItem(csvFile);
-            corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription`);
+            corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription (CSV)`);
             corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
 
             corpusCrate.pushValue(csvFile, "@type", "Annotation");
@@ -166,10 +171,9 @@ async function main() {
             corpusCrate.pushValue(newRepoObject, "hasFile", csvFile);
             corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
 
-            //item.hasFile.push({"@id": newFile["@id"]}); --- THIS NOW ADDS THE THING TO THE WRONG PLACE!!!
           }
           if (!collector.debug) {
-            await corpusRepo.addFile(newRepoObject, corpusRepo.collector.dataDir, path.basename(csvPath));
+             await corpusRepo.addFile(csvFile, corpusRepo.collector.dataDir, path.basename(csvPath));
           }
      
         }
