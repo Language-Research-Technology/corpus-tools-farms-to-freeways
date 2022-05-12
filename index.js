@@ -122,7 +122,13 @@ async function main() {
 
         if (filePath.endsWith(".pdf")) {
           file["@type"] = ["File", "Annotation"];
-          file.annotationType = vocab.getVocabItem("Transcription");
+
+          corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
+          corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
+          corpusCrate.pushValue(file, "modality", vocab.getVocabItem("Orthography"));
+
+
+       
           //newItem.hasFile.push(file);
           corpusCrate.pushValue(newRepoObject, "hasFile", file );
           corpusCrate.pushValue(file, "fileOf", newRepoObject);
@@ -147,7 +153,13 @@ async function main() {
             corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription`);
             corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
 
-            corpusCrate.pushValue(csvFile, "@type", "Transcription");
+            corpusCrate.pushValue(csvFile, "@type", "Annotation");
+            corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
+            corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
+            corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("Orthography"));
+  
+            csvFile.modality = vocab.getVocabItem("Orthography");
+
             corpusRepo.linkDialogueSchema(csvFile);
             corpusCrate.pushValue(newRepoObject, "hasFile", csvFile);
             corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
