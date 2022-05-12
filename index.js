@@ -1,40 +1,18 @@
 const {Collector, generateArcpId} = require("oni-ocfl");
-const {languageProfileURI, Languages} = require("language-data-node-tools");
+const {languageProfileURI, Languages, Vocab} = require("language-data-node-tools");
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
 const {fstat} = require("fs");
 const fs = require("fs");
 
-async function addCSV(collector, corpusRepo) {
-  for (let item of corpusRepo.crate.getFlatGraph()) {
-    if (corpusRepo.crate.utils.asArray(item["@type"]).includes("TextDialogue")) {
-      for (let f of item.hasFile) {
-        const filePath = f["@id"];
-        if (filePath.match(/\.pdf/)) {
-          var csvPath = filePath.replace(/\.pdf$/, ".csv");
-          var newFile = corpusRepo.crate.getItem(csvPath);
-          if (!newFile) {
-            newFile = {
-              "@id": csvPath,
-              "name": `${item.name} full text transcription`,
-              "@type": ["File", "OrthographicTranscription"]
-            }
-            corpusRepo.linkDialogueSchema(newFile);
-            corpusRepo.crate.addItem(newFile);
-            item.hasFile.push({"@id": newFile["@id"]});
-          }
-          if (!collector.debug) {
-            await corpusRepo.addFile(newFile, corpusRepo.collector.dataDir, path.basename(csvPath));
-          }
-          break;
-        }
-      }
-    }
-  }
-}
+
 
 async function main() {
+  // BRing in the OLAC-derviced terms
+  const vocab = new Vocab;
+
+  await vocab.load();
   const languages = new Languages();
   await languages.fetch();
   const engLang = languages.getLanguage("English");
@@ -46,6 +24,7 @@ async function main() {
   const corpusRepo = collector.newObject(collector.templateCrateDir);
   corpusRepo.mintArcpId("corpus", "root");
   const corpusCrate = corpusRepo.crate;
+  corpusCrate.addContext(vocab.getContext());
   corpusCrate.rootId = generateArcpId(collector.namespace, "corpus", "root");
 
   console.log(corpusCrate.rootDataset['@id']);
@@ -93,6 +72,8 @@ async function main() {
   }
   corpusCrate.addItem(interviews);
 
+
+
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("Interview Transcript")) {
       const intervieweeID = names[item.interviewee[0]]['@id'];
@@ -104,16 +85,18 @@ async function main() {
       //console.log(audio.hasFile[0]["@id"])
       const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
       // Copy stuff to audioFile
+      corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
       audioFile.originalTapeStock = audio.originalTapeStock;
       audioFile.originalFormat = audio.originalFormat;
       audioFile.cassetteLabelNotes = audio.cassetteLabelNotes;
       audioFile.ingestNotes = audio.ingestNotes;
       audioFile.duration = audio.duration;
       audioFile.bitrate = audio["bitRate/Frequency"];
+      audioFile.encodingFormat = "audio/mpeg";
 
-      let newItem = {
+      let newRepoObject = {
         "@id": generateArcpId(collector.namespace, "interview-item", item["@id"]),
-        "@type": ["RepositoryObject", "TextDialogue"],
+        "@type": ["RepositoryObject"],
         "name": [item.name.replace(/.*interview/, "Interview")],
         "speaker": {"@id": intervieweeID},
         "hasFile": [{"@id": audioFile["@id"]}],
@@ -123,25 +106,82 @@ async function main() {
         license: item.license,
         contentLocation: item.contentLocation,
         description: item.description,
-        language: {"@id": engLang["@id"]}
-      }
+        language: {"@id": engLang["@id"]},
+        encodingFormat: "audio/MPEG"
+      }      
+
+      corpusCrate.pushValue(interviews, "hasMember", newRepoObject);
+      corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
+      corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
+
+      //await addCSV(collector, corpusRepo, corpusCrate, newItem);
+
       for (let f of item.hasFile) {
         const file = corpusCrate.getItem(f["@id"]);
-        if (f["@id"].endsWith(".pdf") || f["@id"].endsWith(".csv")) {
-          file["@type"] = ["File", "OrthographicTranscription"]
+        const filePath = f["@id"]
+
+        if (filePath.endsWith(".pdf")) {
+          file["@type"] = ["File", "Annotation"];
+          file.annotationType = vocab.getVocabItem("Transcription");
+          //newItem.hasFile.push(file);
+          corpusCrate.pushValue(newRepoObject, "hasFile", file );
+          corpusCrate.pushValue(file, "fileOf", newRepoObject);
+          corpusCrate.pushValue(audioFile, "hasAnnotation", file);
+          corpusCrate.pushValue(file, "isAnnotationOf", audioFile);
+          corpusCrate.pushValue(file, "encodingFormat", "application/pdf");
+
+
+          var csvPath = filePath.replace(/\.pdf$/, ".csv");
+          var csvFile = corpusRepo.crate.getItem(csvPath);
+          if (!csvFile) {
+            csvFile = {
+              "@id": csvPath,
+              "@type": ["File"]
+
+              
+            }
+            corpusRepo.crate.addItem(csvFile);
+          
+
+
+            corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription`);
+            corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
+
+            corpusCrate.pushValue(csvFile, "@type", "Transcription");
+            corpusRepo.linkDialogueSchema(csvFile);
+            corpusCrate.pushValue(newRepoObject, "hasFile", csvFile);
+            corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
+
+            corpusCrate.pushValue(csvFile, "isAnnotationOf", audioFile)
+            //item.hasFile.push({"@id": newFile["@id"]}); --- THIS NOW ADDS THE THING TO THE WRONG PLACE!!!
+          }
+          if (!collector.debug) {
+            await corpusRepo.addFile(newRepoObject, corpusRepo.collector.dataDir, path.basename(csvPath));
+          }
+     
         }
-        newItem.hasFile.push(file);
+        
+
+       
       }
-      corpusCrate.pushValue(interviews, "hasMember", newItem);
     }
   }
   if (root.hasPart) {
+    const newParts = [];
     for (let part of root.hasPart) {
       console.log(`root Part : ${part['@id']}`);
-      if (!part.name[0].match(/Interview/)) {
-        corpusCrate.pushValue(root, "hasMember", part);
+      if (part["@type"].includes["File"]) {
+        newParts.push(part)
+      }
+      if (part["@type"].includes["RepositoryCollection"] && !part.name[0].match(/Interview/)) {
+        corpusCrate.pushValue(root, hasMember, part)
       }
     }
+    root.hasPart = [];
+    for (let part of newParts) {
+      corpusCrate.pushValue(root, "hasPart", part);
+    }
+
   }
   //root.hasPart = [];
 
@@ -176,7 +216,6 @@ async function main() {
 
   corpusCrate.pushValue(root, "hasMember", interviews);
   // Clean up crate - remove unwanted Repo Objects
-  await addCSV(collector, corpusRepo);
 
   if (!collector.debug) {
     console.log('Adding corpus to repository');
