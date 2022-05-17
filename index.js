@@ -162,6 +162,7 @@ async function main() {
 
             corpusRepo.linkDialogueSchema(csvFile);
             corpusCrate.pushValue(newRepoObject, "hasFile", csvFile);
+            corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
             corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
 
           }
