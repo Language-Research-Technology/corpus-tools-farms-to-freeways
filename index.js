@@ -7,7 +7,6 @@ const {fstat} = require("fs");
 const fs = require("fs");
 
 
-
 async function main() {
   // BRing in the OLAC-derviced terms
   const vocab = new Vocab;
@@ -39,7 +38,7 @@ async function main() {
   corpusCrate.getItem("#notes").name = "notes";
 
   corpusCrate.rootDataset.name = 'Farms to Freeways Example Dataset';
-  corpusCrate.rootDataset["@type"] = ["Dataset", "Repository", "RepositoryCollection"];
+  corpusCrate.rootDataset["@type"] = ["Dataset", "RepositoryCollection"];
 
   const root = corpusRepo.rootDataset;
   root.hasMember = [];
@@ -52,7 +51,7 @@ async function main() {
   }
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
-      if(item['@id'] !== corpusCrate.rootId) {
+      if (item['@id'] !== corpusCrate.rootId) {
         const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
         corpusCrate.changeGraphId(
           item,
@@ -71,8 +70,6 @@ async function main() {
     "hasMember": []
   }
   corpusCrate.addItem(interviews);
-
-
 
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("Interview Transcript")) {
@@ -109,14 +106,15 @@ async function main() {
         description: item.description,
         language: {"@id": engLang["@id"]},
         encodingFormat: "audio/MPEG"
-      }      
+      }
 
       audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
-
+      corpusCrate.pushValue(audioFile, "language", engLang);
 
       corpusCrate.pushValue(interviews, "hasMember", newRepoObject);
       corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
+      corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("Speech"));
 
       //await addCSV(collector, corpusRepo, corpusCrate, newItem);
 
@@ -130,18 +128,16 @@ async function main() {
           corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
           corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
           corpusCrate.pushValue(file, "modality", vocab.getVocabItem("Orthography"));
+          corpusCrate.pushValue(file, "language", engLang);
 
-
-       
           //newItem.hasFile.push(file); 
           // File is PDF at this point
           file.name = `${item.name} full text transcription (PDF)`
-          corpusCrate.pushValue(newRepoObject, "hasFile", file );
+          corpusCrate.pushValue(newRepoObject, "hasFile", file);
           corpusCrate.pushValue(file, "fileOf", newRepoObject);
           corpusCrate.pushValue(audioFile, "hasAnnotation", file);
-          corpusCrate.pushValue(file, "isAnnotationOf", audioFile);
+          corpusCrate.pushValue(file, "annotationOf", audioFile);
           corpusCrate.pushValue(file, "encodingFormat", "application/pdf");
-
 
           var csvPath = filePath.replace(/\.pdf$/, ".csv");
           var csvFile = corpusRepo.crate.getItem(csvPath);
@@ -149,8 +145,6 @@ async function main() {
             csvFile = {
               "@id": csvPath,
               "@type": ["File"]
-
-              
             }
             corpusRepo.crate.addItem(csvFile);
             corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription (CSV)`);
@@ -161,10 +155,9 @@ async function main() {
             corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
             corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("Orthography"));
             corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
-            corpusCrate.pushValue(csvFile, "isAnnotationOf", audioFile);
+            corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
+            corpusCrate.pushValue(csvFile, "language", engLang);
 
-
-  
             csvFile.modality = vocab.getVocabItem("Orthography");
 
             corpusRepo.linkDialogueSchema(csvFile);
@@ -173,13 +166,9 @@ async function main() {
 
           }
           if (!collector.debug) {
-             await corpusRepo.addFile(csvFile, corpusRepo.collector.dataDir, path.basename(csvPath));
+            await corpusRepo.addFile(csvFile, corpusRepo.collector.dataDir, path.basename(csvPath));
           }
-     
         }
-        
-
-       
       }
     }
   }
