@@ -60,8 +60,9 @@ async function main() {
       }
     }
   }
-
+  
   // Make a new collection of items based on audiofiles
+  /*
   const interviews = {
     "@id": generateArcpId(collector.namespace, "collection", "interviews"),
     "name": "Interviews",
@@ -70,6 +71,7 @@ async function main() {
     "hasMember": []
   }
   corpusCrate.addItem(interviews);
+  */
 
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("Interview Transcript")) {
@@ -79,7 +81,7 @@ async function main() {
       }
       //console.log(item);
       const audio = corpusCrate.getItem(item.transcriptOf["@id"]);
-      //console.log(audio.hasFile[0]["@id"])
+      //console.log(audio.hasPart[0]["@id"])
       const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
       // Copy stuff to audioFile
       corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
@@ -97,7 +99,7 @@ async function main() {
         "@type": ["RepositoryObject"],
         "name": [item.name.replace(/.*interview/, "Interview")],
         "speaker": {"@id": intervieweeID},
-        "hasFile": [{"@id": audioFile["@id"]}],
+        "hasPart": [{"@id": audioFile["@id"]}],
         dateCreated: item.dateCreated,
         interviewer: item.interviewer,
         publisher: item.publisher,
@@ -111,7 +113,7 @@ async function main() {
       audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
       corpusCrate.pushValue(audioFile, "language", engLang);
 
-      corpusCrate.pushValue(interviews, "hasMember", newRepoObject);
+      corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
       corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("Speech"));
@@ -130,10 +132,10 @@ async function main() {
           corpusCrate.pushValue(file, "modality", vocab.getVocabItem("Orthography"));
           corpusCrate.pushValue(file, "language", engLang);
 
-          //newItem.hasFile.push(file); 
+          //newItem.hasPart.push(file); 
           // File is PDF at this point
           file.name = `${item.name} full text transcription (PDF)`
-          corpusCrate.pushValue(newRepoObject, "hasFile", file);
+          corpusCrate.pushValue(newRepoObject, "hasPart", file);
           corpusCrate.pushValue(file, "fileOf", newRepoObject);
           corpusCrate.pushValue(audioFile, "hasAnnotation", file);
           corpusCrate.pushValue(file, "annotationOf", audioFile);
@@ -161,7 +163,7 @@ async function main() {
             csvFile.modality = vocab.getVocabItem("Orthography");
 
             corpusRepo.linkDialogueSchema(csvFile);
-            corpusCrate.pushValue(newRepoObject, "hasFile", csvFile);
+            corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
             corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
 
           }
@@ -220,7 +222,7 @@ async function main() {
     }
   }
 
-  corpusCrate.pushValue(root, "hasMember", interviews);
+  //corpusCrate.pushValue(root, "hasMember", interviews);
   // Clean up crate - remove unwanted Repo Objects
 
   if (!collector.debug) {
