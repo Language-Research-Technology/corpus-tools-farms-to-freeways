@@ -51,6 +51,20 @@ async function main() {
   }
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
+        // Rename collections and give them nicer IDs
+
+      if (item['@id'] !== corpusCrate.rootId) {
+        const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
+        corpusCrate.changeGraphId(
+          item,
+          generateArcpId(collector.namespace, "collection", lowerNameId)
+        );
+        corpusCrate.pushValue(root, "hasMember", item);
+
+      }
+      
+    } else if (item["@type"].includes("RepositoryObject")) {
+      // Rename Objects
       if (item['@id'] !== corpusCrate.rootId) {
         const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
         corpusCrate.changeGraphId(
@@ -58,7 +72,15 @@ async function main() {
           generateArcpId(collector.namespace, "collection", lowerNameId)
         );
       }
+      item.hasPart = item.hasFile;
+      delete item.hasFile;      
+    } else if (item["@type"].includes("File")) {
+      // Rename Objects
+     
+    
+      delete item.fileOf;  
     }
+
   }
   
   // Make a new collection of items based on audiofiles
@@ -82,7 +104,7 @@ async function main() {
       //console.log(item);
       const audio = corpusCrate.getItem(item.transcriptOf["@id"]);
       //console.log(audio.hasPart[0]["@id"])
-      const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
+      const audioFile = corpusCrate.getItem(_.first(audio.hasPart)["@id"]);
       // Copy stuff to audioFile
       corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
       audioFile.name = `${item.name} recording (mp3)`
@@ -120,7 +142,7 @@ async function main() {
 
       //await addCSV(collector, corpusRepo, corpusCrate, newItem);
 
-      for (let f of item.hasFile) {
+      for (let f of item.hasPart) {
         const file = corpusCrate.getItem(f["@id"]);
         const filePath = f["@id"]
 
@@ -136,7 +158,6 @@ async function main() {
           // File is PDF at this point
           file.name = `${item.name} full text transcription (PDF)`
           corpusCrate.pushValue(newRepoObject, "hasPart", file);
-          corpusCrate.pushValue(file, "fileOf", newRepoObject);
           corpusCrate.pushValue(audioFile, "hasAnnotation", file);
           corpusCrate.pushValue(file, "annotationOf", audioFile);
           corpusCrate.pushValue(file, "encodingFormat", "application/pdf");
@@ -164,7 +185,7 @@ async function main() {
 
             corpusRepo.linkDialogueSchema(csvFile);
             corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
-            corpusCrate.pushValue(csvFile, "fileOf", newRepoObject);
+            corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
 
           }
           if (!collector.debug) {
@@ -181,9 +202,7 @@ async function main() {
       if (part["@type"].includes["File"]) {
         newParts.push(part)
       }
-      if (part["@type"].includes["RepositoryCollection"] && !part.name[0].match(/Interview/)) {
-        corpusCrate.pushValue(root, hasMember, part)
-      }
+   
     }
     root.hasPart = [];
     for (let part of newParts) {
