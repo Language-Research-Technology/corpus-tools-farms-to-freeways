@@ -51,8 +51,8 @@ async function main() {
   }
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
-        // Rename collections and give them nicer IDs
-
+      // Rename collections and give them nicer IDs
+      item["@type"] = "RepositoryCollection";
       if (item['@id'] !== corpusCrate.rootId) {
         const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
         corpusCrate.changeGraphId(
@@ -64,6 +64,7 @@ async function main() {
       }
       
     } else if (item["@type"].includes("RepositoryObject")) {
+      //item["@type"] = "RepositoryObject";
       // Rename Objects
       if (item['@id'] !== corpusCrate.rootId) {
         const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
@@ -122,6 +123,7 @@ async function main() {
         "name": [item.name.replace(/.*interview/, "Interview")],
         "speaker": {"@id": intervieweeID},
         "hasPart": [{"@id": audioFile["@id"]}],
+        conformsTo:   languageProfileURI("Object"),
         dateCreated: item.dateCreated,
         interviewer: item.interviewer,
         publisher: item.publisher,
@@ -172,7 +174,6 @@ async function main() {
             corpusRepo.crate.addItem(csvFile);
             corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription (CSV)`);
             corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
-
             corpusCrate.pushValue(csvFile, "@type", "Annotation");
             corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
             corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
