@@ -131,7 +131,7 @@ async function main() {
         contentLocation: item.contentLocation,
         description: item.description,
         language: {"@id": engLang["@id"]},
-        encodingFormat: "audio/MPEG"
+        encodingFormat: "audio/mpeg"
       }
 
       audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
