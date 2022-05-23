@@ -53,7 +53,9 @@ async function main() {
     if (item["@type"].includes("RepositoryCollection")) {
       // Rename collections and give them nicer IDs
       item["@type"] = "RepositoryCollection";
+
       if (item['@id'] !== corpusCrate.rootId) {
+        delete item.license;
         const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
         corpusCrate.changeGraphId(
           item,
@@ -74,12 +76,16 @@ async function main() {
         );
       }
       item.hasPart = item.hasFile;
-      delete item.hasFile;      
+      delete item.hasFile;   
+      delete item.license;
+   
     } else if (item["@type"].includes("File")) {
       // Rename Objects
      
     
-      delete item.fileOf;  
+      delete item.fileOf; 
+      delete item.license;
+ 
     }
 
   }
@@ -127,7 +133,6 @@ async function main() {
         dateCreated: item.dateCreated,
         interviewer: item.interviewer,
         publisher: item.publisher,
-        license: item.license,
         contentLocation: item.contentLocation,
         description: item.description,
         language: {"@id": engLang["@id"]},
@@ -136,8 +141,9 @@ async function main() {
 
       audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
       corpusCrate.pushValue(audioFile, "language", engLang);
-
+      corpusCrate.addItem(newRepoObject);
       corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
+      console.log(corpusCrate.rootDataset.hasMember);
       corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("Speech"));
@@ -146,6 +152,7 @@ async function main() {
 
       for (let f of item.hasPart) {
         const file = corpusCrate.getItem(f["@id"]);
+        delete file.license;
         const filePath = f["@id"]
 
         if (filePath.endsWith(".pdf")) {
@@ -194,6 +201,9 @@ async function main() {
           }
         }
       }
+    }
+    if (item["@type"].includes("RepositoryObject")) {
+      item.type = "RepositoryObject";
     }
   }
   if (root.hasPart) {
