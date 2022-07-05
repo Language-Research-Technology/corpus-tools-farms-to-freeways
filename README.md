@@ -70,3 +70,6 @@ Assuming there is a copy of the Farms to Freeways data as exported from Omeka in
 make BASE_DATA_DIR=/farms-to-freeways/data REPO_OUT_DIR=/your/ocfl-repo BASE_TMP_DIR=/your/temp
 ```
 
+### How to run your own oni
+
+See [oni/README.md](./oni/README.md) for instructions
