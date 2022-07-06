@@ -129,7 +129,7 @@ async function main() {
         "name": [item.name.replace(/.*interview/, "Interview")],
         "speaker": {"@id": intervieweeID},
         "hasPart": [{"@id": audioFile["@id"]}],
-        conformsTo:   languageProfileURI("Object"),
+        conformsTo: {"@id": languageProfileURI("Object")},
         dateCreated: item.dateCreated,
         interviewer: item.interviewer,
         publisher: item.publisher,

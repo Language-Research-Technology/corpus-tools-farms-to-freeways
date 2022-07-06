@@ -109,3 +109,5 @@ ocfl-repo
 .DS_Store
 make_run.sh
 ro-crate_for_debug*
+scratch-ocfl
+ocfl
