@@ -24,7 +24,7 @@ services:
       - "5432:5432"
 
   api:
-    image: arkisto/oni-api
+    image: arkisto/oni-api:0.1.6
     hostname: api
     tty: true
     environment:
@@ -45,7 +45,7 @@ services:
     command: ["/wait-for-it.sh", "db:5432", "elasticsearch:9200", "--", "node", "./server.bundle.js"]
 
   ui:
-    image: arkisto/oni-ui:latest
+    image: arkisto/oni-ui:0.1.6
     hostname: ui
     tty: true
     environment:

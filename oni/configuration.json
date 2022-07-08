@@ -273,8 +273,8 @@
       "indexRoutes": true
     },
     "conformsTo": {
-      "collection": "https://github.com/Language-Research-Technology/ro-crate-profile#Collection",
-      "object": "https://github.com/Language-Research-Technology/ro-crate-profile#Object"
+      "collection": "https://purl.archive.org/textcommons/profile#Collection",
+      "object": "https://purl.archive.org/textcommons/profile#Object"
     }
   }
 }
