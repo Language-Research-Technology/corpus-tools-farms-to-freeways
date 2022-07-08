@@ -118,7 +118,9 @@ async function main() {
       audioFile.originalTapeStock = audio.originalTapeStock;
       audioFile.originalFormat = audio.originalFormat;
       audioFile.cassetteLabelNotes = audio.cassetteLabelNotes;
-      audioFile.ingestNotes = audio.ingestNotes;
+      if(audio.ingestNotes) {
+        audioFile.ingestNotes = audio.ingestNotes;
+      }
       audioFile.duration = audio.duration;
       audioFile.bitrate = audio["bitRate/Frequency"];
       audioFile.encodingFormat = "audio/mpeg";
