@@ -52,7 +52,7 @@ async function main() {
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
       // Rename collections and give them nicer IDs
-      item["@type"] = "RepositoryCollection";
+      item["@type"] = ["Dataset", "RepositoryCollection"];
 
       if (item['@id'] !== corpusCrate.rootId) {
         delete item.license;
