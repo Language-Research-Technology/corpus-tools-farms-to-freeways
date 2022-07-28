@@ -5,6 +5,8 @@ const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
 const {fstat} = require("fs");
 const fs = require("fs");
+const { dir } = require("console");
+const { file } = require("tmp");
 
 
 async function main() {
@@ -30,12 +32,7 @@ async function main() {
 
   corpusCrate.addProfile(languageProfileURI("Collection"));
   // Headers are "time","speaker","text","notes"
-  corpusRepo.addDialogueSchema({"columns": ["#speaker", "#transcript", "#start_time", "#notes"]});
-  // Local name in csv colums is different from the built in one
-  const t = corpusCrate.getItem("#transcript").name = "text";
-  corpusCrate.getItem("#speaker").name = "speaker";
-  corpusCrate.getItem("#start_time").name = "time";
-  corpusCrate.getItem("#notes").name = "notes";
+
 
   corpusCrate.rootDataset.name = 'Farms to Freeways Example Dataset';
   corpusCrate.rootDataset["@type"] = ["Dataset", "RepositoryCollection"];
@@ -46,13 +43,12 @@ async function main() {
   const names = {};
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("Person")) {
-      names[item.name[0]] = item;
+      names[corpusCrate.utils.asArray(item.name.trim())[0]] = item;
     }
   }
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("RepositoryCollection")) {
       // Rename collections and give them nicer IDs
-      item["@type"] = ["Dataset", "RepositoryCollection"];
 
       if (item['@id'] !== corpusCrate.rootId) {
         delete item.license;
@@ -61,7 +57,7 @@ async function main() {
           item,
           generateArcpId(collector.namespace, "collection", lowerNameId)
         );
-        corpusCrate.pushValue(root, "hasMember", item);
+        //corpusCrate.pushValue(root, "hasMember", item);
 
       }
       
@@ -104,7 +100,11 @@ async function main() {
 
   for (let item of corpusCrate.getFlatGraph()) {
     if (item["@type"].includes("Interview Transcript")) {
-      const intervieweeID = names[item.interviewee[0]]['@id'];
+      console.log(corpusCrate.utils.asArray(item.interviewee), names["Heather Corr"])
+
+      const intervieweeID = names[corpusCrate.utils.asArray(item.interviewee)]['@id'];
+
+
       if (!intervieweeID) {
         console.log("Cant find", item.interviewee)
       }
@@ -114,7 +114,7 @@ async function main() {
       const audioFile = corpusCrate.getItem(_.first(audio.hasPart)["@id"]);
       // Copy stuff to audioFile
       corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
-      audioFile.name = `${item.name} recording (mp3)`
+      audioFile.name = `${item.name} recording (mp3)`;
       audioFile.originalTapeStock = audio.originalTapeStock;
       audioFile.originalFormat = audio.originalFormat;
       audioFile.cassetteLabelNotes = audio.cassetteLabelNotes;
@@ -124,16 +124,27 @@ async function main() {
       audioFile.duration = audio.duration;
       audioFile.bitrate = audio["bitRate/Frequency"];
       audioFile.encodingFormat = "audio/mpeg";
-
+      const interviewerName = item.interviewer;
+      const interviewerID = generateArcpId(collector.namespace, "interviewer", interviewerName.replace(/\s/g, ""));
+      if (!corpusCrate.getItem(interviewerID)){
+        corpusCrate.addItem({
+          "@id": interviewerID,
+          "name": interviewerName,
+          "@type": "Person",
+          "gender": "F"
+      });
+    }
+    const intervieweeName = corpusCrate.getItem(intervieweeID).name[0]
+    console.log("NAME ::::::::" , intervieweeName)
       let newRepoObject = {
-        "@id": generateArcpId(collector.namespace, "interview-item", item["@id"]),
+        "@id": generateArcpId(collector.namespace, "interview-item", intervieweeName.replace(/\s/, "").toLowerCase()),
         "@type": ["RepositoryObject"],
         "name": [item.name.replace(/.*interview/, "Interview")],
         "speaker": {"@id": intervieweeID},
         "hasPart": [{"@id": audioFile["@id"]}],
         conformsTo: {"@id": languageProfileURI("Object")},
         dateCreated: item.dateCreated,
-        interviewer: item.interviewer,
+        interviewer: {"@id": interviewerID},
         publisher: item.publisher,
         contentLocation: item.contentLocation,
         description: item.description,
@@ -191,15 +202,19 @@ async function main() {
             corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
             corpusCrate.pushValue(csvFile, "language", engLang);
 
-            csvFile.modality = vocab.getVocabItem("Orthography");
 
-            corpusRepo.linkDialogueSchema(csvFile);
             corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
             corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
 
           }
           if (!collector.debug) {
-            await corpusRepo.addFile(csvFile, corpusRepo.collector.dataDir, path.basename(csvPath));
+            const csvActualPath = path.join(corpusRepo.collector.dataDir, path.basename(csvPath));
+            let csvContents = fs.readFileSync(csvActualPath).toString();
+            csvContents = csvContents.replace(/,"speaker",/,`,"speaker","speakerID",`);
+            csvContents = csvContents.replace(/,"B",/g, `,"B","${intervieweeID}",`);
+            csvContents = csvContents.replace(/,"A",/g, `,"A","${interviewerID}",`);
+            fs.writeFileSync(path.join(corpusRepo.collector.tempDirPath, path.basename(csvPath)), csvContents);
+            await corpusRepo.addFile(csvFile, corpusRepo.collector.tempDirPath, path.basename(csvPath));
           }
         }
       }
@@ -237,8 +252,9 @@ async function main() {
 
   //corpusCrate.addItem(filesDir)
   for (let item of corpusCrate.getFlatGraph()) {
+    
     if (item["@type"].includes("File")) {
-      if (!collector.debug) {
+      if (!collector.debug && !item["@id"].endsWith(".csv")) {
         console.log(`Adding hasPart to 'Files' ${item['@id']}`);
         //corpusCrate.pushValue(filesDir, "hasPart", item);
         await corpusRepo.addFile(item, collector.templateCrateDir, null, true);
