@@ -178,7 +178,7 @@ async function main() {
       corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
       console.log(corpusCrate.rootDataset.hasMember);
       corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
-      corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
+      console.log(vocab.getVocabItem("Speech"));dielikeababy;
       corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("Speech"));
 
       //await addCSV(collector, corpusRepo, corpusCrate, newItem);
