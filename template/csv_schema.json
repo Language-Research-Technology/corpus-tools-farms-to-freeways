@@ -1,0 +1,37 @@
+
+    "fields": [
+        {
+            "name": "",
+            "type": "integer",
+            "format": "default"
+        },
+      
+        {
+            "name": "time",
+            "type": "string",
+            "format": "default",
+            "rdfType": "https://schema.org/startTime",
+            "description": "Start time of the utterance."
+        },
+        {
+            "name": "speakerID",
+            "type": "string",
+            "format": "default",
+            "rdfType": "https://schema.org/Person",
+            "rdfProperty": "http://purl.archive.org/textcommons/terms#speaker",
+            "description": "Speakers are those whose voices predominate in a recorded or filmed resource. (This resource may be a transcription of that recording.)",
+            "example": "Participants in a recorded conversation, elicitation session, or informal narration would be termed Speakers. Audience members who do not participate beyond the occasional backchannel would be termed Responders."
+        },
+        {
+            "name": "text",
+            "type": "string",
+            "format": "default",
+            "rdfDefinedTerm": ["https://purl.archive.org/textcommons/terms#Orthography", "https://purl.archive.org/textcommons/terms#Transcription"]
+            "rdfProperty": "hasAnnotation", 
+            "description": "This column contains transcribed speech, the unit is turns"
+        }
+    ],
+    "missingValues": [
+        ""
+    ]
+}

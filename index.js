@@ -27,8 +27,28 @@ async function main() {
   const corpusCrate = corpusRepo.crate;
   corpusCrate.addContext(vocab.getContext());
   corpusCrate.rootId = generateArcpId(collector.namespace, "corpus", "root");
+  const schemaFileName = 'csv_schema.json';
+  const schemaFile = {
+    '@id': schemaFileName,
+    '@type': ['File'], // TODO: what is this other type
+    'name': 'Frictionless Data Schema for CSV transcript files',
+    'encodingFormat': 'application/json',
+    'conformsTo': {"@id": "https://specs.frictionlessdata.io/table-schema/"}
+  }
+  corpusCrate.addValues(corpusCrate.rootDataset, 'hasPart', schemaFile);
+  const schemaEntity = {
+    "@id": generateArcpId(collector.namespace, "schema", "csv"), //"arcp://name,ausnc.ary/csv_schema", // REPOSITORY-UNIQUE NAME
+    "@type": "CreativeWork",
+    "Name": "Frictionless Table Schema for CSV transcription files in the Sydney Speaks corpus",
+    "sameAs": schemaFileName, //Reference to the schema file above TODO: is this the best link?
+    "conformsTo": {
+      "@id": "https://specs.frictionlessdata.io/table-schema/"
+    }
+  }
+  corpusCrate.addItem(schemaEntity);
 
-  console.log(corpusCrate.rootDataset['@id']);
+  await corpusRepo.addFile(schemaEntity, "template", null, true);
+
 
   corpusCrate.addProfile(languageProfileURI("Collection"));
   // Headers are "time","speaker","text","notes"
@@ -201,6 +221,7 @@ async function main() {
             corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
             corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
             corpusCrate.pushValue(csvFile, "language", engLang);
+            corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
 
 
             corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
