@@ -28,14 +28,30 @@ async function main() {
 
   console.log(corpusCrate.rootDataset['@id']);
 
+  const schemaFileName = 'csv_schema.json';
+  const schemaFile = {
+    '@id': schemaFileName,
+    '@type': ['File'], // TODO: what is this other type
+    'name': 'Frictionless Data Schema for CSV transcript files',
+    'encodingFormat': 'application/json',
+    'conformsTo': {"@id": "https://specs.frictionlessdata.io/table-schema/"}
+  }
+  corpusCrate.addValues(corpusCrate.rootDataset, 'hasPart', schemaFile);
+  const schemaEntity = {
+    "@id": generateArcpId(collector.namespace, "schema", "csv"), //"arcp://name,ausnc.ary/csv_schema", // REPOSITORY-UNIQUE NAME
+    "@type": "CreativeWork",
+    "Name": "Frictionless Table Schema for CSV transcription files in the Farms to Freeways corpus",
+    "sameAs": schemaFileName, //Reference to the schema file above TODO: is this the best link?
+    "conformsTo": [
+      {"@id": "https://specs.frictionlessdata.io/table-schema/"},
+      {"@id": "https://purl.archive.org/textcommons/schemas/conversation"}
+    ]
+  }
+  corpusCrate.addItem(schemaEntity);
+
+  await corpusRepo.addFile(schemaEntity, collector.templateCrateDir, null, true);
+
   corpusCrate.addProfile(languageProfileURI("Collection"));
-  // Headers are "time","speaker","text","notes"
-  corpusRepo.addDialogueSchema({"columns": ["#speaker", "#transcript", "#start_time", "#notes"]});
-  // Local name in csv colums is different from the built in one
-  const t = corpusCrate.getItem("#transcript").name = "text";
-  corpusCrate.getItem("#speaker").name = "speaker";
-  corpusCrate.getItem("#start_time").name = "time";
-  corpusCrate.getItem("#notes").name = "notes";
 
   corpusCrate.rootDataset.name = 'Farms to Freeways Example Dataset';
   corpusCrate.rootDataset["@type"] = ["Dataset", "RepositoryCollection"];
@@ -70,6 +86,7 @@ async function main() {
       // Rename Objects
       if (item['@id'] !== corpusCrate.rootId) {
         const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
+        console.log(lowerNameId)
         corpusCrate.changeGraphId(
           item,
           generateArcpId(collector.namespace, "collection", lowerNameId)
@@ -114,7 +131,7 @@ async function main() {
       const audioFile = corpusCrate.getItem(_.first(audio.hasPart)["@id"]);
       // Copy stuff to audioFile
       corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
-      audioFile.name = `${item.name} recording (mp3)`
+      audioFile.name = `${item.name} recording (mp3)`;
       audioFile.originalTapeStock = audio.originalTapeStock;
       audioFile.originalFormat = audio.originalFormat;
       audioFile.cassetteLabelNotes = audio.cassetteLabelNotes;
@@ -125,8 +142,9 @@ async function main() {
       audioFile.bitrate = audio["bitRate/Frequency"];
       audioFile.encodingFormat = "audio/mpeg";
 
+      const lowerNameId = item.name.toLowerCase().replace(/\W/g, "");
       let newRepoObject = {
-        "@id": generateArcpId(collector.namespace, "interview-item", item["@id"]),
+        "@id": generateArcpId(collector.namespace, "interview-item", lowerNameId),
         "@type": ["RepositoryObject"],
         "name": [item.name.replace(/.*interview/, "Interview")],
         "speaker": {"@id": intervieweeID},
@@ -145,7 +163,7 @@ async function main() {
       corpusCrate.pushValue(audioFile, "language", engLang);
       corpusCrate.addItem(newRepoObject);
       corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
-      console.log(corpusCrate.rootDataset.hasMember);
+      //console.log(corpusCrate.rootDataset.hasMember);
       corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "linguisticGenre", vocab.getVocabItem("Interview"));
       corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("Speech"));
@@ -190,13 +208,11 @@ async function main() {
             corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
             corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
             corpusCrate.pushValue(csvFile, "language", engLang);
+            corpusCrate.pushValue(csvFile, "conformsTo", schemaEntity);
 
             csvFile.modality = vocab.getVocabItem("Orthography");
-
-            corpusRepo.linkDialogueSchema(csvFile);
             corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
             corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
-
           }
           if (!collector.debug) {
             await corpusRepo.addFile(csvFile, corpusRepo.collector.dataDir, path.basename(csvPath));
