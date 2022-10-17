@@ -1,5 +1,5 @@
 const {Collector, generateArcpId} = require("oni-ocfl");
-const {languageProfileURI, Languages, Vocab} = require("language-data-node-tools");
+const {languageProfileURI, Languages, Vocab} = require("language-data-commons-vocabs");
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
@@ -32,21 +32,19 @@ async function main() {
     '@id': schemaFileName,
     '@type': ['File'], // TODO: what is this other type
     'name': 'Frictionless Data Schema for CSV transcript files',
-    'encodingFormat': 'application/json',
-    'conformsTo': {"@id": "https://specs.frictionlessdata.io/table-schema/"}
+    'encodingFormat': 'application/json'
   }
   corpusCrate.addValues(corpusCrate.rootDataset, 'hasPart', schemaFile);
+  corpusCrate.addValues(schemaFile, 'conformsTo', {"@id": "https://specs.frictionlessdata.io/table-schema/"})
   const schemaEntity = {
     "@id": generateArcpId(collector.namespace, "schema", "csv"), //"arcp://name,ausnc.ary/csv_schema", // REPOSITORY-UNIQUE NAME
-    "@type": "CreativeWork",
+    "@type": ["CreativeWork"],
     "Name": "Frictionless Table Schema for CSV transcription files in the Farms to Freeways corpus",
     "sameAs": schemaFileName, //Reference to the schema file above TODO: is this the best link?
-    "conformsTo": [
-      {"@id": "https://specs.frictionlessdata.io/table-schema/"},
-      {"@id": "https://purl.archive.org/textcommons/schemas/conversation"}
-    ]
   }
   corpusCrate.addItem(schemaEntity);
+  corpusCrate.addValues(schemaEntity, 'conformsTo', {"@id": "https://specs.frictionlessdata.io/table-schema/"})
+  corpusCrate.addValues(schemaEntity, 'conformsTo', {"@id": "https://purl.archive.org/textcommons/schemas/conversation"})
 
   await corpusRepo.addFile(schemaEntity, collector.templateCrateDir, null, true);
 
@@ -59,15 +57,31 @@ async function main() {
 
   const root = corpusRepo.rootDataset;
   root.hasMember = [];
-
+  // Build a look-up table of names so we can use them later on to link things together
   const names = {};
-  for (let item of corpusCrate.getFlatGraph()) {
-    if (item["@type"].includes("Person")) {
-      names[corpusCrate.utils.asArray(item.name.trim())[0]] = item;
+  const jsonCrate = corpusCrate.toJSON();
+
+  for (let item of corpusCrate.getGraph()) {
+    const itemType = item["@type"];
+    console.log(itemType);
+    //TODO: Ask Alvin why some are undefined. Some nodes in the ro-crate seem to not have types.
+    if(!itemType) {
+      console.log(item);
+      continue;
+    }
+    if (itemType.includes("Person")) {
+      // Some of the names have trailing spaces
+      names[item.name[0].trim()] = item;
     }
   }
   for (let item of corpusCrate.getFlatGraph()) {
-    if (item["@type"].includes("RepositoryCollection")) {
+    const itemType = item["@type"];
+    console.log(itemType);
+    if(!itemType) {
+      console.log(item);
+      continue;
+    }
+    if (itemType.includes("RepositoryCollection")) {
       // Rename collections and give them nicer IDs
 
       if (item['@id'] !== corpusCrate.rootId) {
@@ -81,7 +95,7 @@ async function main() {
 
       }
 
-    } else if (item["@type"].includes("RepositoryObject")) {
+    } else if (itemType.includes("RepositoryObject")) {
       //item["@type"] = "RepositoryObject";
       // Rename Objects
       if (item['@id'] !== corpusCrate.rootId) {
@@ -95,13 +109,10 @@ async function main() {
       delete item.hasFile;
       delete item.license;
 
-    } else if (item["@type"].includes("File")) {
+    } else if (itemType.includes("File")) {
       // Rename Objects
-
-
       delete item.fileOf;
       delete item.license;
-
     }
 
   }
@@ -119,6 +130,12 @@ async function main() {
   */
 
   for (let item of corpusCrate.getFlatGraph()) {
+    const itemType = item["@type"];
+    console.log(itemType);
+    if(!itemType) {
+      console.log(item);
+      break;
+    }
     if (item["@type"].includes("Interview Transcript")) {
       console.log(corpusCrate.utils.asArray(item.interviewee), names["Heather Corr"])
 
@@ -273,8 +290,12 @@ async function main() {
 
   //corpusCrate.addItem(filesDir)
   for (let item of corpusCrate.getFlatGraph()) {
-
-    if (item["@type"].includes("File")) {
+    const itemType = item["@type"];
+    console.log(itemType);
+    if(!itemType){
+      break;
+    }
+    if (itemType.includes("File")) {
       if (!collector.debug && !item["@id"].endsWith(".csv")) {
         console.log(`Adding hasPart to 'Files' ${item['@id']}`);
         //corpusCrate.pushValue(filesDir, "hasPart", item);
