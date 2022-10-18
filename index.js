@@ -146,12 +146,14 @@ async function main() {
         console.log("Cant find", item.interviewee)
       }
       //console.log(item);
+      item.hasPart = item.hasFile;
+
       const audio = corpusCrate.getItem(item.transcriptOf["@id"]);
       // It had hasPart before!!
       console.log("audio.hasPart ===");
       console.log(audio.hasPart)
-      if (audio.hasPart) {
-        const audioFile = corpusCrate.getItem(_.first(audio.hasPart)["@id"]);
+      if (audio.hasFile) {
+        const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
         // Copy stuff to audioFile
         corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
         audioFile.name = `${item.name} recording (mp3)`;
