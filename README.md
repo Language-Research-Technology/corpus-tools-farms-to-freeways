@@ -68,10 +68,9 @@ See [oni/README.md](./oni/README.md) for instructions
 
 ## Running with the `ldaca-portal`
 To use this data corpus with the [ldaca-portal] (https://github.com/Language-Research-Technology/ldaca-portal)
-
-    1. Update the script `make_ocfl_for_local_oni.sh` to point to your local path for the farms-to-freeways data and to the expected path for the `ldaca-portal`
+- Update the script `make_ocfl_for_local_oni.sh` to point to your local path for the farms-to-freeways data and to the expected path for the `ldaca-portal`
     
-    ```bash
+```bash
         FARMS_TO_FREEWAYS_TEMPLATE_DIR=/LOCAL-PATH/farms_to_freeways
         FARMS_TO_FREEWAYS_DATA_DIR=/LOCAL-PATH/farms_to_freeways_csv_files
         FARMS_TO_FREEWAYS_BASE_DATA_DIR=/LOCAL-PATH
@@ -82,7 +81,6 @@ To use this data corpus with the [ldaca-portal] (https://github.com/Language-Res
         BASE_TMP_DIR=/opt/storage/oni/temp \
         TEMPLATE_DIR=${FARMS_TO_FREEWAYS_TEMPLATE_DIR}\
         DATA_DIR=${FARMS_TO_FREEWAYS_DATA_DIR} \
-        ```
-        
-    2. Run the script `make_ocfl_for_local_oni.sh`
-    3. Follow the directions in the `ldaca-portal` code to set up the portal
+```
+- Run the script `make_ocfl_for_local_oni.sh`
+- Follow the directions in the `ldaca-portal` code to set up the portal
