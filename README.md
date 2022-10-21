@@ -65,3 +65,21 @@ make BASE_DATA_DIR=/farms-to-freeways/data REPO_OUT_DIR=/your/ocfl-repo BASE_TMP
 ### How to run your own oni
 
 See [oni/README.md](./oni/README.md) for instructions
+
+## Running with the `ldaca-portal`
+To use this data corpus with the [ldaca-portal] (https://github.com/Language-Research-Technology/ldaca-portal) 
+    1. Update the script `make_ocfl_for_local_oni.sh` to point to your local path for the farms-to-freeways data and to the expected path for the `ldaca-portal`
+     ```bash
+        FARMS_TO_FREEWAYS_TEMPLATE_DIR=/LOCAL-PATH/farms_to_freeways
+        FARMS_TO_FREEWAYS_DATA_DIR=/LOCAL-PATH/farms_to_freeways_csv_files
+        FARMS_TO_FREEWAYS_BASE_DATA_DIR=/LOCAL-PATH
+
+        make BASE_DATA_DIR=${FARMS_TO_FREEWAYS_BASE_DATA_DIR} \
+        REPO_OUT_DIR=/opt/storage/oni/ocfl \
+        REPO_SCRATCH_DIR=/opt/storage/oni/scratch-ocfl \
+        BASE_TMP_DIR=/opt/storage/oni/temp \
+        TEMPLATE_DIR=${FARMS_TO_FREEWAYS_TEMPLATE_DIR}\
+        DATA_DIR=${FARMS_TO_FREEWAYS_DATA_DIR} \
+    ```
+    2. Run the script `make_ocfl_for_local_oni.sh`
+    3. Follow the directions in the `ldaca-portal` code to set up the portal
