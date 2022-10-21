@@ -82,5 +82,6 @@ To use this data corpus with the [ldaca-portal] (https://github.com/Language-Res
         TEMPLATE_DIR=${FARMS_TO_FREEWAYS_TEMPLATE_DIR}\
         DATA_DIR=${FARMS_TO_FREEWAYS_DATA_DIR} \
         ```
+        
     2. Run the script `make_ocfl_for_local_oni.sh`
     3. Follow the directions in the `ldaca-portal` code to set up the portal
