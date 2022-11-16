@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Language-Research-Technology/corpus-tools-farms-to-freeways#readme",
   "dependencies": {
+    "@describo/data-packs": "^0.8.0",
     "@opendocsg/pdf2md": "git+https://github.com/opendocsg/pdf2md.git",
     "commander": "^8.2.0",
     "fs-extra": "^10.0.0",

@@ -1,5 +1,6 @@
 const {Collector, generateArcpId} = require("oni-ocfl");
 const {languageProfileURI, Languages, Vocab} = require("language-data-commons-vocabs");
+const {DataPack} = require('@describo/data-packs');
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
@@ -14,9 +15,12 @@ async function main() {
   const vocab = new Vocab;
 
   await vocab.load();
-  const languages = new Languages();
-  await languages.fetch();
-  const engLang = languages.getLanguage("English");
+  let datapack = new DataPack({dataPacks: ['Glottolog'], indexFields: ['name']});
+  await datapack.load();
+  let engLang = datapack.get({
+    field: "name",
+    value: "English",
+  });
 
   const collector = new Collector(); // Get all the paths etc from commandline
   await collector.connect();
@@ -138,10 +142,7 @@ async function main() {
     }
     if (itemType.includes("Interview Transcript")) {
       console.log(corpusCrate.utils.asArray(item.interviewee), names["Heather Corr"])
-
       const intervieweeID = names[corpusCrate.utils.asArray(item.interviewee)]['@id'];
-
-
       if (!intervieweeID) {
         console.log("Cant find", item.interviewee)
       }
@@ -155,7 +156,7 @@ async function main() {
       if (audio.hasFile) {
         const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
         // Copy stuff to audioFile
-        corpusCrate.pushValue(audioFile, "@type", "PrimaryText");
+        corpusCrate.pushValue(audioFile, "@type", "PrimaryMaterial");
         audioFile.name = `${item.name} recording (mp3)`;
         audioFile.originalTapeStock = audio.originalTapeStock;
         audioFile.originalFormat = audio.originalFormat;
@@ -198,10 +199,8 @@ async function main() {
         corpusCrate.pushValue(audioFile, "language", engLang);
         corpusCrate.addItem(newRepoObject);
         corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
-        console.log(corpusCrate.rootDataset.hasMember);
         corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
-        console.log(vocab.getVocabItem("Speech"));
-        corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("Speech"));
+        corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("SpokenLanguage"));
 
         //await addCSV(collector, corpusRepo, corpusCrate, newItem);
 
@@ -215,7 +214,7 @@ async function main() {
 
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
-            corpusCrate.pushValue(file, "modality", vocab.getVocabItem("Orthography"));
+            corpusCrate.pushValue(file, "modality", vocab.getVocabItem("WrittenLanguage"));
             corpusCrate.pushValue(file, "language", engLang);
 
             //newItem.hasPart.push(file);
@@ -239,7 +238,7 @@ async function main() {
               corpusCrate.pushValue(csvFile, "@type", "Annotation");
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
-              corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("Orthography"));
+              corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("WrittenLanguage"));
               corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
               corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
               corpusCrate.pushValue(csvFile, "language", engLang);
@@ -270,7 +269,6 @@ async function main() {
   if (root.hasPart) {
     const newParts = [];
     for (let part of root.hasPart) {
-      console.log(`root Part : ${part['@id']}`);
       if (part["@type"].includes["File"]) {
         newParts.push(part)
       }
@@ -297,13 +295,11 @@ async function main() {
   //corpusCrate.addItem(filesDir)
   for (let item of corpusCrate.getFlatGraph()) {
     const itemType = item["@type"];
-    console.log(itemType);
     if (!itemType) {
       continue;
     }
     if (itemType.includes("File")) {
       if (!collector.debug && !item["@id"].endsWith(".csv")) {
-        console.log(`Adding hasPart to 'Files' ${item['@id']}`);
         //corpusCrate.pushValue(filesDir, "hasPart", item);
         await corpusRepo.addFile(item, collector.templateCrateDir, null, true);
       }
@@ -315,6 +311,7 @@ async function main() {
       corpusCrate.utils.asArray(item["@type"]).includes("Sound")) {
       //console.log("deleting", item);
       // Deleting doesnt work which is why this is building a whole new graph
+      delete item;
     }
   }
 
