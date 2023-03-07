@@ -8,9 +8,8 @@ REPO_SCRATCH_DIR=scratch
 REPO_OUT_DIR=./ocfl-repo
 BASE_TMP_DIR=temp
 
-
-REPO_NAME=ATAP
-NAMESPACE=farms-to-freeways
+REPO_NAME=LDaCA
+NAMESPACE=farms-to-freeways-example-dataset
 TEMPLATE_DIR=${BASE_DATA_DIR}/farms_to_freeways
 DATA_DIR=${BASE_DATA_DIR}/farms_to_freeways_csv_files
 TEMP_DIR=${BASE_TMP_DIR}/temp
