@@ -27,10 +27,10 @@ async function main() {
   // Make a base corpusRepo using template
   console.log("Making from template", collector.templateCrateDir)
   const corpusRepo = collector.newObject(collector.templateCrateDir);
-  corpusRepo.mintArcpId("corpus");
+  corpusRepo.mintArcpId();
   const corpusCrate = corpusRepo.crate;
   corpusCrate.addContext(vocab.getContext());
-  corpusCrate.rootId = generateArcpId(collector.namespace, "corpus");
+  corpusCrate.rootId = generateArcpId(collector.namespace);
   const schemaFileName = 'csv_schema.json';
   const schemaFile = {
     '@id': schemaFileName,
