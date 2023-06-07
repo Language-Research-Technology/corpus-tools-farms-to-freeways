@@ -20,7 +20,7 @@
     "@describo/data-packs": "^0.8.0",
     "@opendocsg/pdf2md": "git+https://github.com/opendocsg/pdf2md.git",
     "commander": "^8.2.0",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.1.0",
     "language-data-commons-vocabs": "github:Language-Research-Technology/language-data-commons-vocabs.git",
     "lodash": "^4.17.21",
     "oni-ocfl": "github:Arkisto-Platform/oni-ocfl",

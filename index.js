@@ -4,7 +4,7 @@ const {DataPack} = require('@describo/data-packs');
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
-const {fstat} = require("fs");
+const {fstat, readJSONSync} = require("fs-extra");
 const fs = require("fs");
 const {dir} = require("console");
 const {file} = require("tmp");
@@ -21,6 +21,7 @@ async function main() {
     field: "name",
     value: "English",
   });
+  const licenses = readJSONSync('licenses.json');//read in License data (all items in the collection have the same license)
 
   const collector = new Collector(); // Get all the paths etc from commandline
   await collector.connect();
@@ -29,6 +30,9 @@ async function main() {
   const corpusRepo = collector.newObject(collector.templateCrateDir);
   corpusRepo.mintArcpId();
   const corpusCrate = corpusRepo.crate;
+  const metadataDescriptor = corpusCrate.getItem('ro-crate-metadata.json');
+  metadataDescriptor.license = licenses.metadata_license;
+
   corpusCrate.addContext(vocab.getContext());
   corpusCrate.rootId = generateArcpId(collector.namespace);
   const schemaFileName = 'csv_schema.json';
@@ -59,6 +63,7 @@ async function main() {
   corpusCrate.rootDataset["@type"] = ["Dataset", "RepositoryCollection"];
 
   const root = corpusRepo.rootDataset;
+  root['license'] = licenses.data_license;
   root.hasMember = [];
   // Build a look-up table of names so we can use them later on to link things together
   const names = {};
@@ -156,6 +161,7 @@ async function main() {
         const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
         // Copy stuff to audioFile
         corpusCrate.pushValue(audioFile, "@type", "PrimaryMaterial");
+        audioFile["license"] = licenses.data_license;
         audioFile.name = `${item.name} recording (mp3)`;
         audioFile.originalTapeStock = audio.originalTapeStock;
         audioFile.originalFormat = audio.originalFormat;
@@ -182,6 +188,7 @@ async function main() {
           "@id": generateArcpId(collector.namespace, `interview-object/${intervieweeName.replace(/\s/, "").toLowerCase()}`),
           "@type": ["RepositoryObject"],
           "name": [item.name.replace(/.*interview/, "Interview")],
+          "license": licenses.data_license,
           "speaker": {"@id": intervieweeID},
           "hasPart": [{"@id": audioFile["@id"]}],
           conformsTo: {"@id": languageProfileURI("Object")},
@@ -223,6 +230,7 @@ async function main() {
             corpusCrate.pushValue(audioFile, "hasAnnotation", file);
             corpusCrate.pushValue(file, "annotationOf", audioFile);
             corpusCrate.pushValue(file, "encodingFormat", "application/pdf");
+            corpusCrate.pushValue(file, "license", licenses.data_license);
 
             var csvPath = filePath.replace(/\.pdf$/, ".csv");
             var csvFile = corpusRepo.crate.getItem(csvPath);
@@ -242,6 +250,7 @@ async function main() {
               corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
               corpusCrate.pushValue(csvFile, "language", engLang);
               corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
+              corpusCrate.pushValue(csvFile, "license", licenses.data_license);
 
               corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
               corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
