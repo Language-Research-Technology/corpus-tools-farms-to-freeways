@@ -155,7 +155,9 @@ async function main() {
       if (audio.hasFile) {
         const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
         // Copy stuff to audioFile
-        corpusCrate.pushValue(audioFile, "@type", "PrimaryMaterial");
+        corpusCrate.pushValue(audioFile, "@type", "CreativeWork");
+        corpusCrate.pushValue(audioFile, "materialType", vocab.getVocabItem("PrimaryMaterial"));
+        
         audioFile.name = `${item.name} recording (mp3)`;
         audioFile.originalTapeStock = audio.originalTapeStock;
         audioFile.originalFormat = audio.originalFormat;
@@ -195,11 +197,11 @@ async function main() {
         }
 
         audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
-        corpusCrate.pushValue(audioFile, "language", engLang);
+        corpusCrate.pushValue(audioFile, "inLanguage", engLang);
         corpusCrate.addItem(newRepoObject);
         corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
         corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
-        corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("SpokenLanguage"));
+        corpusCrate.pushValue(audioFile, "communicationMode", vocab.getVocabItem("SpokenLanguage"));
 
         //await addCSV(collector, corpusRepo, corpusCrate, newItem);
 
@@ -213,10 +215,10 @@ async function main() {
 
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
-            corpusCrate.pushValue(file, "modality", vocab.getVocabItem("WrittenLanguage"));
-            corpusCrate.pushValue(file, "language", engLang);
+            corpusCrate.pushValue(file, "communicationMode", vocab.getVocabItem("WrittenLanguage"));
+            corpusCrate.pushValue(file, "inLanguage", engLang);
 
-            //newItem.hasPart.push(file);
+            //newItem.hasPart.push(file);"
             // File is PDF at this point
             file.name = `${item.name} full text transcription (PDF)`
             corpusCrate.pushValue(newRepoObject, "hasPart", file);
@@ -234,13 +236,14 @@ async function main() {
               corpusRepo.crate.addItem(csvFile);
               corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription (CSV)`);
               corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
-              corpusCrate.pushValue(csvFile, "@type", "Annotation");
+              corpusCrate.pushValue(csvFile, "@type", "File");
+              corpusCrate.pushValue(csvFile, "materialType", vocab.getVocabItem("Annotation"))
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
-              corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("WrittenLanguage"));
+              corpusCrate.pushValue(csvFile, "communicationMode", vocab.getVocabItem("SpokenLanguage"));
               corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
               corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
-              corpusCrate.pushValue(csvFile, "language", engLang);
+              corpusCrate.pushValue(csvFile, "inLanguage", engLang);
               corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
 
               corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
