@@ -70,6 +70,12 @@ async function main() {
   const jsonCrate = corpusCrate.toJSON();
 
   for (let item of corpusCrate.getGraph()) {
+    if (item['@type'].includes('GeoCoordinates')) {
+      item['asWKT'] = `POINT(${item.longitude[0]} ${item.latitude[0]})`;
+    }
+  }
+
+  for (let item of corpusCrate.getGraph()) {
     const itemType = item["@type"];
     console.log(itemType);
     //TODO: Ask Alvin why some are undefined. Some nodes in the ro-crate seem to not have types.
@@ -237,12 +243,11 @@ async function main() {
             if (!csvFile) {
               csvFile = {
                 "@id": csvPath,
-                "@type": ["File"]
-              }
+                "@type": ["File", "Annotation"]
+              };
               corpusRepo.crate.addItem(csvFile);
               corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription (CSV)`);
               corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
-              corpusCrate.pushValue(csvFile, "@type", "Annotation");
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
               corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("WrittenLanguage"));
