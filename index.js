@@ -192,7 +192,7 @@ async function main() {
           publisher: item.publisher,
           contentLocation: item.contentLocation,
           description: item.description,
-          language: {"@id": engLang["@id"]},
+          inLanguage: {"@id": engLang["@id"]},
           encodingFormat: "audio/mpeg"
         }
 
@@ -211,14 +211,15 @@ async function main() {
           const filePath = f["@id"]
 
           if (filePath.endsWith(".pdf")) {
-            file["@type"] = ["File", "Annotation"];
+            file["@type"] = ["File"];
+            file["materialType"] = vocab.getVocabItem("Annotation");
 
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
             corpusCrate.pushValue(file, "communicationMode", vocab.getVocabItem("WrittenLanguage"));
             corpusCrate.pushValue(file, "inLanguage", engLang);
 
-            //newItem.hasPart.push(file);"
+            //newItem.hasPart.push(file);
             // File is PDF at this point
             file.name = `${item.name} full text transcription (PDF)`
             corpusCrate.pushValue(newRepoObject, "hasPart", file);
