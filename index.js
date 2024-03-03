@@ -1,6 +1,6 @@
 const {Collector, generateArcpId} = require("oni-ocfl");
 const {languageProfileURI, Languages, Vocab} = require("language-data-commons-vocabs");
-const {DataPack} = require('@describo/data-packs');
+const {DataPack} = require('@ldac/data-packs');
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
@@ -326,13 +326,6 @@ async function main() {
 
   const flatJson = corpusCrate.getJson();
   fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(flatJson, null, 2));
-}
-
-//Very efficient! no regex
-function getExtension(filename) {
-  const ext = filename.split('.').pop();
-  if (ext === filename) return "";
-  return ext;
 }
 
 main();
