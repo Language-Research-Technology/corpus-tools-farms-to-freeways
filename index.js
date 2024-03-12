@@ -24,8 +24,9 @@ async function main() {
 
   const collector = new Collector(); // Get all the paths etc from commandline
   await collector.connect();
+  
   // Make a base corpusRepo using template
-  console.log("Making from template", collector.templateCrateDir)
+  console.log("Making from template", collector.templateCrateDir);
   const corpusRepo = collector.newObject(collector.templateCrateDir);
   corpusRepo.mintArcpId();
   const corpusCrate = corpusRepo.crate;
