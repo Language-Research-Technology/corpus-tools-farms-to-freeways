@@ -71,7 +71,7 @@ async function main() {
 
   for (let item of corpusCrate.getGraph()) {
     if (item['@type'].includes('GeoCoordinates')) {
-      item['asWKT'] = `POINT(${item.longitude[0]} ${item.latitude[0]})`;
+      item['asWKT'] = `POINT (${item.longitude[0]} ${item.latitude[0]})`;
     }
   }
 
