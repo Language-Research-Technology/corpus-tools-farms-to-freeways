@@ -67,11 +67,13 @@ async function main() {
 
   for (let item of corpusCrate.getGraph()) {
     const itemType = item["@type"];
-    console.log(itemType);
-    //TODO: Ask Alvin why some are undefined. Some nodes in the ro-crate seem to not have types.
+    //TODO: Why somethings do not have types, maybe its not a problem anymore?
     if (!itemType) {
-      console.log(item);
+      console.log(`No itemType for item: ${JSON.stringify(item)}`);
       continue;
+    }
+    if (itemType.includes('GeoCoordinates')) {
+      item['asWKT'] = `POINT (${item.longitude[0]} ${item.latitude[0]})`;
     }
     if (itemType.includes("Person")) {
       // Some of the names have trailing spaces
