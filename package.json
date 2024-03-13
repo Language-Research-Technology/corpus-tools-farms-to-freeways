@@ -23,7 +23,7 @@
     "fs-extra": "^10.0.0",
     "language-data-commons-vocabs": "github:Language-Research-Technology/language-data-commons-vocabs.git",
     "lodash": "^4.17.21",
-    "oni-ocfl": "github:Arkisto-Platform/oni-ocfl",
+    "oni-ocfl": "github:Language-Research-Technology/oni-ocfl",
     "pdf-to-json": "^0.1.0",
     "pdf2json": "^3.0.3",
     "pdf2md": "^1.0.2",
