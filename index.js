@@ -1,6 +1,6 @@
 const {Collector, generateArcpId} = require("oni-ocfl");
 const {languageProfileURI, Languages, Vocab} = require("language-data-commons-vocabs");
-const {DataPack} = require('@describo/data-packs');
+const {DataPack} = require('@ldac/data-packs');
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
@@ -25,8 +25,9 @@ async function main() {
 
   const collector = new Collector(); // Get all the paths etc from commandline
   await collector.connect();
+  
   // Make a base corpusRepo using template
-  console.log("Making from template", collector.templateCrateDir)
+  console.log("Making from template", collector.templateCrateDir);
   const corpusRepo = collector.newObject(collector.templateCrateDir);
   corpusRepo.mintArcpId();
   const corpusCrate = corpusRepo.crate;
@@ -77,11 +78,13 @@ async function main() {
 
   for (let item of corpusCrate.getGraph()) {
     const itemType = item["@type"];
-    console.log(itemType);
-    //TODO: Ask Alvin why some are undefined. Some nodes in the ro-crate seem to not have types.
+    //TODO: Why somethings do not have types, maybe its not a problem anymore?
     if (!itemType) {
-      console.log(item);
+      console.log(`No itemType for item: ${JSON.stringify(item)}`);
       continue;
+    }
+    if (itemType.includes('GeoCoordinates')) {
+      item['asWKT'] = `POINT (${item.longitude[0]} ${item.latitude[0]})`;
     }
     if (itemType.includes("Person")) {
       // Some of the names have trailing spaces
@@ -166,7 +169,8 @@ async function main() {
       if (audio.hasFile) {
         const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
         // Copy stuff to audioFile
-        corpusCrate.pushValue(audioFile, "@type", "PrimaryMaterial");
+        corpusCrate.pushValue(audioFile, "@type", "CreativeWork");
+        corpusCrate.pushValue(audioFile, "materialType", vocab.getVocabItem("PrimaryMaterial"));
         audioFile["license"] = licenses.data_license;
         audioFile.name = `${item.name} recording (mp3)`;
         audioFile.originalTapeStock = audio.originalTapeStock;
@@ -203,16 +207,16 @@ async function main() {
           publisher: item.publisher,
           contentLocation: item.contentLocation,
           description: item.description,
-          language: {"@id": engLang["@id"]},
+          inLanguage: {"@id": engLang["@id"]},
           encodingFormat: "audio/mpeg"
         }
 
         audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
-        corpusCrate.pushValue(audioFile, "language", engLang);
+        corpusCrate.pushValue(audioFile, "inLanguage", engLang);
         corpusCrate.addItem(newRepoObject);
         corpusCrate.pushValue(corpusCrate.rootDataset, "hasMember", newRepoObject);
         corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
-        corpusCrate.pushValue(audioFile, "modality", vocab.getVocabItem("SpokenLanguage"));
+        corpusCrate.pushValue(audioFile, "communicationMode", vocab.getVocabItem("SpokenLanguage"));
 
         //await addCSV(collector, corpusRepo, corpusCrate, newItem);
 
@@ -222,12 +226,13 @@ async function main() {
           const filePath = f["@id"]
 
           if (filePath.endsWith(".pdf")) {
-            file["@type"] = ["File", "Annotation"];
+            file["@type"] = ["File"];
+            file["materialType"] = vocab.getVocabItem("Annotation");
 
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
             corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
-            corpusCrate.pushValue(file, "modality", vocab.getVocabItem("WrittenLanguage"));
-            corpusCrate.pushValue(file, "language", engLang);
+            corpusCrate.pushValue(file, "communicationMode", vocab.getVocabItem("WrittenLanguage"));
+            corpusCrate.pushValue(file, "inLanguage", engLang);
 
             //newItem.hasPart.push(file);
             // File is PDF at this point
@@ -250,10 +255,10 @@ async function main() {
               corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
               corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
-              corpusCrate.pushValue(csvFile, "modality", vocab.getVocabItem("WrittenLanguage"));
+              corpusCrate.pushValue(csvFile, "communicationMode", vocab.getVocabItem("SpokenLanguage"));
               corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
               corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
-              corpusCrate.pushValue(csvFile, "language", engLang);
+              corpusCrate.pushValue(csvFile, "inLanguage", engLang);
               corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
               corpusCrate.pushValue(csvFile, "license", licenses.data_license);
 
@@ -337,13 +342,6 @@ async function main() {
 
   const flatJson = corpusCrate.getJson();
   fs.writeFileSync("ro-crate_for_debug.json", JSON.stringify(flatJson, null, 2));
-}
-
-//Very efficient! no regex
-function getExtension(filename) {
-  const ext = filename.split('.').pop();
-  if (ext === filename) return "";
-  return ext;
 }
 
 main();
