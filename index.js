@@ -73,9 +73,6 @@ async function main() {
       console.log(`No itemType for item: ${JSON.stringify(item)}`);
       continue;
     }
-    if (itemType.includes('GeoCoordinates')) {
-      item['asWKT'] = `POINT (${item.longitude[0]} ${item.latitude[0]})`;
-    }
     if (itemType.includes("Person")) {
       // Some of the names have trailing spaces
       names[item.name[0].trim()] = item;
@@ -185,19 +182,6 @@ async function main() {
 
         const intervieweeName = corpusCrate.getItem(intervieweeID).name[0]
         console.log("NAME ::::::::", intervieweeName)
-
-   /*     else if (itemType.includes("GeoCoordinates")){
-          item["@type"] = "Geometry";
-          item.asWKT = `POINT(${item.longitude} ${item.latitude})`
-          delete item.longitude;
-          delete item.latitude;
-          delete item["@label"];
-          console.log(item)
-        }*/
-
-        console.log(corpusCrate.getItem(item.contentLocation["@id"]))
-        let contentLocationa = corpusCrate.getItem(item.contentLocation["@id"]);
-        console.log(contentLocationa.geo[0]["@id"])
         
         let contentLocation = {
           "@id": contentLocationa.geo[0]["@id"],
@@ -206,8 +190,6 @@ async function main() {
         }
 
         corpusCrate.updateEntity(contentLocation)
-        
-        //process.exit()
 
         let newRepoObject = {
           "@id": generateArcpId(collector.namespace, `interview-object/${intervieweeName.replace(/\s/, "").toLowerCase()}`),
