@@ -1,13 +1,13 @@
-const {Collector, generateArcpId} = require("oni-ocfl");
-const {languageProfileURI, Languages, Vocab} = require("language-data-commons-vocabs");
-const {DataPack} = require('@ldac/data-packs');
+const { Collector, generateArcpId } = require("oni-ocfl");
+const { languageProfileURI, Languages, Vocab } = require("language-data-commons-vocabs");
+const { DataPack } = require('@ldac/data-packs');
 const _ = require("lodash");
 const path = require('path');
-const {DEFAULT_ECDH_CURVE} = require("tls");
-const {fstat} = require("fs");
+const { DEFAULT_ECDH_CURVE } = require("tls");
+const { fstat } = require("fs");
 const fs = require("fs");
-const {dir} = require("console");
-const {file} = require("tmp");
+const { dir } = require("console");
+const { file } = require("tmp");
 
 
 async function main() {
@@ -15,7 +15,7 @@ async function main() {
   const vocab = new Vocab;
 
   await vocab.load();
-  let datapack = new DataPack({dataPacks: ['Glottolog'], indexFields: ['name']});
+  let datapack = new DataPack({ dataPacks: ['Glottolog'], indexFields: ['name'] });
   await datapack.load();
   let engLang = datapack.get({
     field: "name",
@@ -24,7 +24,7 @@ async function main() {
 
   const collector = new Collector(); // Get all the paths etc from commandline
   await collector.connect();
-  
+
   // Make a base corpusRepo using template
   console.log("Making from template", collector.templateCrateDir);
   const corpusRepo = collector.newObject(collector.templateCrateDir);
@@ -40,7 +40,7 @@ async function main() {
     'encodingFormat': 'application/json'
   }
   corpusCrate.addValues(corpusCrate.rootDataset, 'hasPart', schemaFile);
-  corpusCrate.addValues(schemaFile, 'conformsTo', {"@id": "https://specs.frictionlessdata.io/table-schema/"})
+  corpusCrate.addValues(schemaFile, 'conformsTo', { "@id": "https://specs.frictionlessdata.io/table-schema/" })
   const schemaEntity = {
     "@id": generateArcpId(collector.namespace, "schema/csv"), //"arcp://name,ausnc.ary/csv_schema", // REPOSITORY-UNIQUE NAME
     "@type": ["CreativeWork"],
@@ -48,8 +48,8 @@ async function main() {
     "sameAs": schemaFileName, //Reference to the schema file above TODO: is this the best link?
   }
   corpusCrate.addItem(schemaEntity);
-  corpusCrate.addValues(schemaEntity, 'conformsTo', {"@id": "https://specs.frictionlessdata.io/table-schema/"})
-  corpusCrate.addValues(schemaEntity, 'conformsTo', {"@id": "https://purl.archive.org/textcommons/schemas/conversation"})
+  corpusCrate.addValues(schemaEntity, 'conformsTo', { "@id": "https://specs.frictionlessdata.io/table-schema/" })
+  corpusCrate.addValues(schemaEntity, 'conformsTo', { "@id": "https://purl.archive.org/textcommons/schemas/conversation" })
 
   await corpusRepo.addFile(schemaEntity, collector.templateCrateDir, null, true);
 
@@ -73,6 +73,7 @@ async function main() {
       console.log(`No itemType for item: ${JSON.stringify(item)}`);
       continue;
     }
+
     if (itemType.includes("Person")) {
       // Some of the names have trailing spaces
       names[item.name[0].trim()] = item;
@@ -117,7 +118,7 @@ async function main() {
       // Rename Objects
       delete item.fileOf;
       delete item.license;
-    } 
+    }
 
   }
 
@@ -158,7 +159,7 @@ async function main() {
         // Copy stuff to audioFile
         corpusCrate.pushValue(audioFile, "@type", "CreativeWork");
         corpusCrate.pushValue(audioFile, "materialType", vocab.getVocabItem("PrimaryMaterial"));
-        
+
         audioFile.name = `${item.name} recording (mp3)`;
         audioFile.originalTapeStock = audio.originalTapeStock;
         audioFile.originalFormat = audio.originalFormat;
@@ -182,32 +183,36 @@ async function main() {
 
         const intervieweeName = corpusCrate.getItem(intervieweeID).name[0]
         console.log("NAME ::::::::", intervieweeName)
-        
+
+        let contentLocationa = corpusCrate.getItem(item.contentLocation["@id"]);
+
         let contentLocation = {
           "@id": contentLocationa.geo[0]["@id"],
-          "@type":"Geometry",
+          "@type": "Geometry",
           "asWKT": `POINT(${contentLocationa.geo[0].longitude} ${contentLocationa.geo[0].latitude})`
         }
 
         corpusCrate.updateEntity(contentLocation)
 
+        //process.exit()
+
         let newRepoObject = {
           "@id": generateArcpId(collector.namespace, `interview-object/${intervieweeName.replace(/\s/, "").toLowerCase()}`),
           "@type": ["RepositoryObject"],
           "name": [item.name.replace(/.*interview/, "Interview")],
-          "speaker": {"@id": intervieweeID},
-          "hasPart": [{"@id": audioFile["@id"]}],
-          conformsTo: {"@id": languageProfileURI("Object")},
+          "speaker": { "@id": intervieweeID },
+          "hasPart": [{ "@id": audioFile["@id"] }],
+          conformsTo: { "@id": languageProfileURI("Object") },
           dateCreated: item.dateCreated,
-          interviewer: {"@id": interviewerID},
+          interviewer: { "@id": interviewerID },
           publisher: item.publisher,
           contentLocation: item.contentLocation,
           description: item.description,
-          inLanguage: {"@id": engLang["@id"]},
+          inLanguage: { "@id": engLang["@id"] },
           encodingFormat: "audio/mpeg"
         }
 
-        
+
 
         audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
         corpusCrate.pushValue(audioFile, "inLanguage", engLang);
@@ -258,7 +263,7 @@ async function main() {
               corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
               corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
               corpusCrate.pushValue(csvFile, "inLanguage", engLang);
-              corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
+              corpusCrate.pushValue(csvFile, "conformsTo", { "@id": schemaFileName });
 
               corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
               corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
