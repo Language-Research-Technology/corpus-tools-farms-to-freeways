@@ -1,6 +1,6 @@
 const {Collector, generateArcpId} = require("oni-ocfl");
 const {languageProfileURI, Languages, Vocab} = require("language-data-commons-vocabs");
-const {DataPack} = require('@describo/data-packs');
+const {DataPack} = require('@ldac/data-packs');
 const _ = require("lodash");
 const path = require('path');
 const {DEFAULT_ECDH_CURVE} = require("tls");
@@ -66,7 +66,7 @@ async function main() {
 
   for (let item of corpusCrate.getGraph()) {
     const itemType = item["@type"];
-    console.log(itemType);
+   // console.log(itemType);
     //TODO: Ask Alvin why some are undefined. Some nodes in the ro-crate seem to not have types.
     if (!itemType) {
       console.log(item);
@@ -79,7 +79,7 @@ async function main() {
   }
   for (let item of corpusCrate.getFlatGraph()) {
     const itemType = item["@type"];
-    console.log(itemType);
+    //console.log(itemType);
     if (!itemType) {
       console.log(item);
       continue;
@@ -116,7 +116,7 @@ async function main() {
       // Rename Objects
       delete item.fileOf;
       delete item.license;
-    }
+    } 
 
   }
 
@@ -134,7 +134,7 @@ async function main() {
 
   for (let item of corpusCrate.getFlatGraph()) {
     const itemType = item["@type"];
-    console.log(itemType);
+    //console.log(itemType);
     if (!itemType) {
       console.log(item);
       continue;
@@ -176,8 +176,33 @@ async function main() {
             "gender": "F"
           });
         }
+
         const intervieweeName = corpusCrate.getItem(intervieweeID).name[0]
         console.log("NAME ::::::::", intervieweeName)
+
+   /*     else if (itemType.includes("GeoCoordinates")){
+          item["@type"] = "Geometry";
+          item.asWKT = `POINT(${item.longitude} ${item.latitude})`
+          delete item.longitude;
+          delete item.latitude;
+          delete item["@label"];
+          console.log(item)
+        }*/
+
+        console.log(corpusCrate.getItem(item.contentLocation["@id"]))
+        let contentLocationa = corpusCrate.getItem(item.contentLocation["@id"]);
+        console.log(contentLocationa.geo[0]["@id"])
+        
+        let contentLocation = {
+          "@id": contentLocationa.geo[0]["@id"],
+          "@type":"Geometry",
+          "asWKT": `POINT(${contentLocationa.geo[0].longitude} ${contentLocationa.geo[0].latitude})`
+        }
+
+        corpusCrate.updateEntity(contentLocation)
+        
+        //process.exit()
+
         let newRepoObject = {
           "@id": generateArcpId(collector.namespace, `interview-object/${intervieweeName.replace(/\s/, "").toLowerCase()}`),
           "@type": ["RepositoryObject"],
@@ -193,6 +218,8 @@ async function main() {
           language: {"@id": engLang["@id"]},
           encodingFormat: "audio/mpeg"
         }
+
+        
 
         audioFile.name = `Recording of ${newRepoObject.name} (mp3)`
         corpusCrate.pushValue(audioFile, "language", engLang);
@@ -307,7 +334,7 @@ async function main() {
     }
     if (corpusCrate.utils.asArray(item["@type"]).includes("Interview Transcript") ||
       corpusCrate.utils.asArray(item["@type"]).includes("Sound")) {
-      //console.log("deleting", item);
+      console.log("deleting", item);
       // Deleting doesnt work which is why this is building a whole new graph
       delete item;
     }
