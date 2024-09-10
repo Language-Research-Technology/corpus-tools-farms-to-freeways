@@ -2,7 +2,7 @@
 # MakeFile for creating Farms To Freeways corpus repo
 # Override BASE_DATA_DIR, REPO_OUT_DIR, BASE_TMP_DIR to point to the location of your datasets
 
-BASE_DATA_DIR=/farms-to-freeways
+BASE_DATA_DIR=./farms-to-freeways
 REPO_SCRATCH_DIR=scratch
 
 REPO_OUT_DIR=./ocfl-repo
