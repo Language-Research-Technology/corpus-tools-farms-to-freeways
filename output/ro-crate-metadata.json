@@ -73,7 +73,7 @@
           "@id": "files"
         }
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "http://omeka.uws.edu.au/farmstofreeways/api/collections/4"
         },
@@ -7313,7 +7313,7 @@
       "description": [
         "Transcripts of the recorded interviews with each participant. Some transcripts were available as existing Microsoft Word documents, others were scanned to PDF format and converted to Microsoft Word using OCR software. All transcripts were then converted to PDF/A format for inclusion in this site.   "
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#427"
         },
@@ -7432,7 +7432,7 @@
       "publisher": [
         "University of Western Sydney"
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#500"
         },
@@ -7554,7 +7554,7 @@
       "publisher": [
         "University of Western Sydney"
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#338"
         },
@@ -7727,7 +7727,7 @@
       "publisher": [
         "University of Western Sydney"
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#165"
         },
@@ -7759,7 +7759,7 @@
       "publisher": [
         "University of Western Sydney"
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#166"
         },
@@ -7785,7 +7785,7 @@
       "@type": [
         "RepositoryCollection"
       ],
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#568"
         },
@@ -10590,7 +10590,7 @@
       "name": "Interviews",
       "@type": "SubCorpus",
       "description": "Interview items include audio and transcripts",
-      "hasMember": [
+      "pcdm:hasMember": [
         {
           "@id": "#interview-#427"
         },
