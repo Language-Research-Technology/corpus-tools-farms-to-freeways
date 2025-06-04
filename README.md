@@ -1,10 +1,10 @@
-# Farms to Freeways Arkisto corpus ingest tools
+# Farms to Freeways Corpus Tools
 
 This repository documents how to build a language corpus from the Farms to Freeways history project data.
 
-The data are [archived at Western Sydney University]
+The data are [archived at Western Sydney University].
 
-And are [available in an Omeka Repository](https://omeka.westernsydney.edu.au/farmstofreeways/)
+And are [available in an Omeka Repository](https://omeka.westernsydney.edu.au/farmstofreeways/).
 
 Peter Sefton exported the data into an RO-Crate, using [this process](https://github.com/UTS-eResearch/omeka-datacrate-tools).
 
@@ -12,13 +12,32 @@ These tools work on the resulting RO-Crate.
 
 ## Install
 
-Then install
-```bash
+Run:
+
+```
 npm install
 ```
 
-## Making CSV files from PDF transcripts
+## Usage
 
+Create a file named `make_run.sh` containing the following data:
+
+```
+#!/usr/bin/env bash
+
+make BASE_DATA_DIR=<base path> \
+ REPO_OUT_DIR=/opt/storage/oni/ocfl \
+ REPO_SCRATCH_DIR=/opt/storage/oni/scratch-ocfl \
+ BASE_TMP_DIR=./storage/temp \
+ NAMESPACE=farms-to-freeways-example-dataset \
+ DATA_DIR=<base path>/farms_to_freeways
+```
+
+Update the `<base path>` sections to the appropriate locations for your local installation.
+
+Running this file using `bash make_run.sh` (or appropriate command) will generate an RO-Crate for the corpus.
+
+## Making CSV files from PDF transcripts
 
 This work has all been done and is not automated but here are notes about how it was done.
 
@@ -48,15 +67,15 @@ node svg2csv.js
 
 copy the CSV files to cloudstor
 
- ```bash
+```bash
 rsync csvfiles/*  ~/cloudstor/atap-repo-misc/farms_to_freeways_csv_files/ -ruvi
- ```
+```
 
 ## Convert the metadata file from a plain-old crate to being a corpus
 
 Assuming there is a copy of the Farms to Freeways data as exported from Omeka in cloudstor.
 
--  Run the script.
+- Run the script.
 
 ```bash
 make BASE_DATA_DIR=/farms-to-freeways/data REPO_OUT_DIR=/your/ocfl-repo BASE_TMP_DIR=/your/temp
