@@ -25,9 +25,11 @@ async function main() {
   const collector = new Collector(); // Get all the paths etc from commandline
   await collector.connect();
 
+  const csvDir = path.join('csvs');
   // Make a base corpusRepo using template
-  console.log("Making from template", collector.templateCrateDir);
-  const corpusRepo = collector.newObject(collector.templateCrateDir);
+  const templateDir = path.join('template');
+  console.log("Making from template", templateDir);
+  const corpusRepo = collector.newObject(templateDir);
   corpusRepo.mintArcpId();
   const corpusCrate = corpusRepo.crate;
   corpusCrate.addContext(vocab.getContext());
@@ -142,10 +144,10 @@ async function main() {
       continue;
     }
     if (itemType.includes("Interview Transcript")) {
-      console.log(corpusCrate.utils.asArray(item.interviewee), names["Heather Corr"])
-      const intervieweeID = names[corpusCrate.utils.asArray(item.interviewee)]['@id'];
+      console.log(corpusCrate.utils.asArray(item['ldac:interviewee']), names["Heather Corr"])
+      const intervieweeID = names[corpusCrate.utils.asArray(item['ldac:interviewee'])]['@id'];
       if (!intervieweeID) {
-        console.log("Cant find", item.interviewee)
+        console.log("Cant find", item['ldac:interviewee'])
       }
       //console.log(item);
       item.hasPart = item.hasFile;
@@ -158,7 +160,7 @@ async function main() {
         const audioFile = corpusCrate.getItem(_.first(audio.hasFile)["@id"]);
         // Copy stuff to audioFile
         corpusCrate.pushValue(audioFile, "@type", "CreativeWork");
-        corpusCrate.pushValue(audioFile, "materialType", vocab.getVocabItem("PrimaryMaterial"));
+        corpusCrate.pushValue(audioFile, "ldac:materialType", vocab.getVocabItem("PrimaryMaterial"));
 
         audioFile.name = `${item.name} recording (mp3)`;
         audioFile.originalTapeStock = audio.originalTapeStock;
@@ -170,7 +172,7 @@ async function main() {
         audioFile.duration = audio.duration;
         audioFile.bitrate = audio["bitRate/Frequency"];
         audioFile.encodingFormat = "audio/mpeg";
-        const interviewerName = item.interviewer[0];
+        const interviewerName = item['ldac:interviewer'][0];
         const interviewerID = generateArcpId(collector.namespace, `interviewer/${interviewerName.replace(/\s/g, "")}`);
         if (!corpusCrate.getItem(interviewerID)) {
           corpusCrate.addItem({
@@ -200,11 +202,11 @@ async function main() {
           "@id": generateArcpId(collector.namespace, `interview-object/${intervieweeName.replace(/\s/, "").toLowerCase()}`),
           "@type": ["RepositoryObject"],
           "name": [item.name[0].replace(/.*interview/, "Interview")],
-          "speaker": {"@id": intervieweeID},
+          "ldac:speaker": {"@id": intervieweeID},
           "hasPart": [{"@id": audioFile["@id"]}],
           conformsTo: {"@id": languageProfileURI("Object")},
           dateCreated: item.dateCreated,
-          interviewer: {"@id": interviewerID},
+          ['ldac:interviewer']: {"@id": interviewerID},
           publisher: item.publisher,
           contentLocation: item.contentLocation,
           description: item.description,
@@ -217,8 +219,8 @@ async function main() {
         corpusCrate.pushValue(audioFile, "inLanguage", engLang);
         corpusCrate.addItem(newRepoObject);
         corpusCrate.pushValue(corpusCrate.rootDataset, "pcdm:hasMember", newRepoObject);
-        corpusCrate.pushValue(newRepoObject, "linguisticGenre", vocab.getVocabItem("Interview"));
-        corpusCrate.pushValue(audioFile, "communicationMode", vocab.getVocabItem("SpokenLanguage"));
+        corpusCrate.pushValue(newRepoObject, "ldac:linguisticGenre", vocab.getVocabItem("Interview"));
+        corpusCrate.pushValue(audioFile, "ldac:communicationMode", vocab.getVocabItem("SpokenLanguage"));
 
         //await addCSV(collector, corpusRepo, corpusCrate, newItem);
 
@@ -229,22 +231,23 @@ async function main() {
 
           if (filePath.endsWith(".pdf")) {
             file["@type"] = ["File"];
-            file["materialType"] = vocab.getVocabItem("Annotation");
+            file["ldac:materialType"] = vocab.getVocabItem("Annotation");
 
-            corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("Transcription"));
-            corpusCrate.pushValue(file, "annotationType", vocab.getVocabItem("TimeAligned"));
-            corpusCrate.pushValue(file, "communicationMode", vocab.getVocabItem("WrittenLanguage"));
+            corpusCrate.pushValue(file, "ldac:annotationType", vocab.getVocabItem("Transcription"));
+            corpusCrate.pushValue(file, "ldac:annotationType", vocab.getVocabItem("TimeAligned"));
+            corpusCrate.pushValue(file, "ldac:communicationMode", vocab.getVocabItem("WrittenLanguage"));
             corpusCrate.pushValue(file, "inLanguage", engLang);
 
             //newItem.hasPart.push(file);
             // File is PDF at this point
             file.name = `${item.name} full text transcription (PDF)`
             corpusCrate.pushValue(newRepoObject, "hasPart", file);
-            corpusCrate.pushValue(audioFile, "hasAnnotation", file);
-            corpusCrate.pushValue(file, "annotationOf", audioFile);
+            corpusCrate.pushValue(audioFile, "ldac:hasAnnotation", file);
+            corpusCrate.pushValue(file, "ldac:annotationOf", audioFile);
             corpusCrate.pushValue(file, "encodingFormat", "application/pdf");
 
             var csvPath = filePath.replace(/\.pdf$/, ".csv");
+            console.log(filePath)
             var csvFile = corpusRepo.crate.getItem(csvPath);
             if (!csvFile) {
               csvFile = {
@@ -255,23 +258,24 @@ async function main() {
               corpusCrate.pushValue(csvFile, "name", `${item.name} full text transcription (CSV)`);
               corpusCrate.pushValue(csvFile, "encodingFormat", "text/csv");
               corpusCrate.pushValue(csvFile, "@type", "File");
-              corpusCrate.pushValue(csvFile, "materialType", vocab.getVocabItem("Annotation"))
-              corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("Transcription"));
-              corpusCrate.pushValue(csvFile, "annotationType", vocab.getVocabItem("TimeAligned"));
-              corpusCrate.pushValue(csvFile, "communicationMode", vocab.getVocabItem("SpokenLanguage"));
-              corpusCrate.pushValue(audioFile, "hasAnnotation", csvFile);
-              corpusCrate.pushValue(csvFile, "annotationOf", audioFile);
+              corpusCrate.pushValue(csvFile, "ldac:materialType", vocab.getVocabItem("Annotation"))
+              corpusCrate.pushValue(csvFile, "ldac:annotationType", vocab.getVocabItem("Transcription"));
+              corpusCrate.pushValue(csvFile, "ldac:annotationType", vocab.getVocabItem("TimeAligned"));
+              corpusCrate.pushValue(csvFile, "ldac:communicationMode", vocab.getVocabItem("SpokenLanguage"));
+              corpusCrate.pushValue(audioFile, "ldac:hasAnnotation", csvFile);
+              corpusCrate.pushValue(csvFile, "ldac:annotationOf", audioFile);
               corpusCrate.pushValue(csvFile, "inLanguage", engLang);
               corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
 
               corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
-              corpusCrate.pushValue(newRepoObject, "indexableText", csvFile);
+              corpusCrate.pushValue(newRepoObject, "ldac:indexableText", csvFile);
 
             }
             if (!collector.debug) {
-              const csvActualPath = path.join(corpusRepo.collector.dataDir, path.basename(csvPath));
+              const csvActualPath = path.join(csvDir, path.basename(csvPath));
+              console.log(csvActualPath)
               let csvContents = fs.readFileSync(csvActualPath).toString();
-              csvContents = csvContents.replace(/,"speaker",/, `,"speaker","speakerID",`);
+              csvContents = csvContents.replace(/,"speaker",/, `,"ldac:speaker","speakerID",`);
               csvContents = csvContents.replace(/,"B",/g, `,"B","${intervieweeID}",`);
               csvContents = csvContents.replace(/,"A",/g, `,"A","${interviewerID}",`);
               fs.writeFileSync(path.join(corpusRepo.collector.tempDirPath, path.basename(csvPath)), csvContents);
@@ -320,7 +324,7 @@ async function main() {
     if (itemType.includes("File")) {
       if (!collector.debug && !item["@id"].endsWith(".csv")) {
         //corpusCrate.pushValue(filesDir, "hasPart", item);
-        await corpusRepo.addFile(item, collector.templateCrateDir, null, true);
+        await corpusRepo.addFile(item, templateDir, null, true);
       }
     }
     if (corpusCrate.utils.asArray(item["@type"]).includes("Person")) {
