@@ -268,7 +268,7 @@ async function main() {
               corpusCrate.pushValue(csvFile, "conformsTo", {"@id": schemaFileName});
 
               corpusCrate.pushValue(newRepoObject, "hasPart", csvFile);
-              corpusCrate.pushValue(newRepoObject, "ldac:indexableText", csvFile);
+              corpusCrate.pushValue(newRepoObject, "ldac:mainText", csvFile);
 
             }
             if (!collector.debug) {
