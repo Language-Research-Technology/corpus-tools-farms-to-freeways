@@ -2,85 +2,67 @@
 
 This repository documents how to build a language corpus from the Farms to Freeways history project data.
 
-The data are [archived at Western Sydney University].
 
-And are [available in an Omeka Repository](https://omeka.westernsydney.edu.au/farmstofreeways/).
+The data is published on its own domain as an Omeka Classic site [available in an Omeka Repository](https://omeka.westernsydney.edu.au/farmstofreeways/) which is considered the published version of the collection.
 
-Peter Sefton exported the data into an RO-Crate, using [this process](https://github.com/UTS-eResearch/omeka-datacrate-tools).
-
-These tools work on the resulting RO-Crate.
-
-## Install
-
-Run:
-
-```
-npm install
-```
-
-## Usage
-
-Create a file named `make_run.sh` containing the following data:
-
-```
-#!/usr/bin/env bash
-
-make BASE_DATA_DIR=<base path> \
- REPO_OUT_DIR=/opt/storage/oni/ocfl \
- REPO_SCRATCH_DIR=/opt/storage/oni/scratch-ocfl \
- BASE_TMP_DIR=./storage/temp \
- NAMESPACE=farms-to-freeways-example-dataset \
- DATA_DIR=<base path>/farms_to_freeways
-```
-
-Update the `<base path>` sections to the appropriate locations for your local installation.
-
-Running this file using `bash make_run.sh` (or appropriate command) will generate an RO-Crate for the corpus.
-
-## Making CSV files from PDF transcripts
-
-This work has all been done and is not automated but here are notes about how it was done.
+The data are [archived at Western Sydney University](https://research-data.westernsydney.edu.au/published/31f45ab0519411ecb15399911543e199/). This does not appear to have a persistent ID and the web page is "orphaned" in that it does not have links to the data repository (which appears to be an instance of [ReDBox](https://www.redboxresearchdata.com.au/plan), maintained by QCIF)
 
 The transcripts in the Omeka repository are in PDF format and speaker turns are only indicated using bold-face text.
 
-There are some [plain text versions available](https://research-data.westernsydney.edu.au/redbox/verNum1.9/published/detail/97a58f4bfca2c074c2d0e357c1b5d28c/ftf_transcripts_plaintext.zip?preview=true) but they don't have speaker turns indicated.
+There are some [plain text versions available](https://research-data.westernsydney.edu.au/default/rdmp/pubrecord/bc45b4d0519311ecb15399911543e199/pubattach/6627738d4a73422786bfc350aac0ff1c?pubId=31f45ab0519411ecb15399911543e199) but they don't have speaker turns indicated.
+
+This repository contains scripts to:
+- Download the published version of Farms to Freeways as an RO-Crate
+- Derive CSV formatted transcripts from the PDF versions, which have been formatted to indicate which speaker is speaking in each turn (the interviewer is in bold text). These transcripts don't have the IDs of the speakers but can be used to distinguish interviewer from interviewee.
+
+
+
+If you got this dataset from Zenodo as a download then the data is already in this dataset 
+
+## Overview
+
+
+```mermaid
+graph TD;
+    
+    subgraph this["Clone of this repo"]
+      tools["make omeka-ro-crate-tools"] --> omeka-ro-crate-tools
+      subgraph omeka-ro-crate-tools
+        get["make get-f2f"]
+        ro-crate["/f2f-out/ro-crate.*"]
+      end
+      csv["make csv #Add files"] --> ro-crate
+      pack["Package self as zip w/ data"]
+      tools --> csv
+      csv --> pack
+    end
+    pack --> prov["Provenance crate with code & data"]
+    prov --> Zenodo
+    
+    
+```   
+
+## Install (on macos)
+
+- Get RO-Crate Excel - TODO - Rosanna plz write up
+- Install LibreOffice: ```brew install LibreOffice``` 
+
+
+
+## Usage
+
+The makedfile in this project handles everything.
+
+```
+make omeka-ro-crate-tools #Installs RO-crate tools from github and fetches data from Omeka
+```
+
+```
+make omeka-ro-crate-tools/svg #Converts PDF transcript files from the repo to CSV 
+```
+
+
 
 To extract text from the PDF files in the repo first use open office:
 
-On a mac, this command will create a bunch of SVG files in the working directory.
 
-```bash
-find farms-to-freeways/ -name "*.pdf" -exec /Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to svg {} \;
-```
-
-Move these into an svgfiles directory:
-
-```bash
-mv *.svg svgfiles/
-```
-
-Run `svg2csv` to create csv files in `csvfiles/`
-
-```bash
-node svg2csv.js
-```
-
-copy the CSV files to cloudstor
-
-```bash
-rsync csvfiles/*  ~/cloudstor/atap-repo-misc/farms_to_freeways_csv_files/ -ruvi
-```
-
-## Convert the metadata file from a plain-old crate to being a corpus
-
-Assuming there is a copy of the Farms to Freeways data as exported from Omeka in cloudstor.
-
-- Run the script.
-
-```bash
-make BASE_DATA_DIR=/farms-to-freeways/data REPO_OUT_DIR=/your/ocfl-repo BASE_TMP_DIR=/your/temp
-```
-
-### How to run your own oni
-
-See [oni/README.md](./oni/README.md) for instructions
