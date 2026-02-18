@@ -28,11 +28,11 @@ graph TD;
     subgraph this["Clone of this repo"]
       tools["make omeka-ro-crate-tools"] --> omeka-ro-crate-tools
       subgraph omeka-ro-crate-tools
-        get["make get-f2f"]
-        ro-crate["/f2f-out/ro-crate.*"]
+        get["make get-f2f"] -->  f2f["Farms to freeways Omeka Site: API"]
+        f2f --> ro-crate["/f2f-out/ro-crate.*"]
       end
       csv["make csv #Add files"] --> ro-crate
-      pack["Package self as zip w/ data"]
+      pack["Package self as zip w/ data (removing git files)"]
       tools --> csv
       csv --> pack
     end
