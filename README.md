@@ -23,7 +23,7 @@ If you got this dataset from Zenodo as a download then the data is already in th
 
 
 ```mermaid
-graph TD;
+graph TB;
     
     subgraph this["Clone of this repo"]
       tools["make omeka-ro-crate-tools"] --> omeka-ro-crate-tools
@@ -36,8 +36,14 @@ graph TD;
       tools --> csv
       csv --> pack
     end
-    pack --> prov["Provenance crate with code & data"]
-    prov --> Zenodo
+    pack --> prov["'Provenance Crate' with code & data - as a snapshot"] --> manual
+    prov --> Zenodo["Zenodo Repository"]
+    subgraph manual["Manual update"]
+      xl["Use Excel forumals and hand-updating to create a Lanaguage Data Commons Profile dataset"] --> lc["LDaC comformant Crate"]
+      lc --> lr["LDaCa Repository"]
+      
+
+    end
     
     
 ```   
@@ -58,11 +64,12 @@ make omeka-ro-crate-tools #Installs RO-crate tools from github and fetches data 
 ```
 
 ```
-make omeka-ro-crate-tools/svg #Converts PDF transcript files from the repo to CSV 
+make omeka-ro-crate-tools/svg #Converts PDF transcript files from the repo to svg 
 ```
 
 
-
-To extract text from the PDF files in the repo first use open office:
+```
+make omeka-ro-crate-tools/csv #Converts PDF transcript files from the repo to CSV 
+```
 
 
