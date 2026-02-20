@@ -57,7 +57,7 @@ graph TB;
 
 ## Usage
 
-The makedfile in this project handles everything.
+The make file in this project handles everything.
 
 ```
 make omeka-ro-crate-tools #Installs RO-crate tools from github and fetches data from Omeka
