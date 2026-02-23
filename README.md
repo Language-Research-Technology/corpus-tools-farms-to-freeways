@@ -46,9 +46,13 @@ graph TB;
     end
 ```   
 
-## Install (on macos)
+## Install (on macOS)
 
 - Get RO-Crate Excel - TODO - Rosanna plz write up
+
+### Install uv
+
+For `uv` installation, see https://docs.astral.sh/uv/.
 
 ### Install LibreOffice
 
